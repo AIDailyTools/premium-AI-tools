@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Generator - Trae Tools</title>
+    <meta name="description" content="Generate custom QR codes for URLs, text, and more. Our free QR code generator is fast, simple, and reliable.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-8 logo-3d">QR Code Generator</h1>
+        <div class="bg-white/10 p-8 rounded-xl">
+            <div class="flex flex-col md:flex-row gap-8">
+                <div class="flex-grow">
+                    <label for="qr-text" class="block mb-2 font-bold">Enter text or URL:</label>
+                    <input type="text" id="qr-text" class="w-full p-2 rounded bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="https://example.com">
+                    <button id="generate-btn" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Generate QR Code
+                    </button>
+                </div>
+                <div id="qr-code-container" class="w-full md:w-64 h-64 bg-white p-4 rounded-lg flex items-center justify-center">
+                    <!-- QR Code will be displayed here -->
+                </div>
+            </div>
+            <!-- Ad Space -->
+            <div class="mt-8 bg-black/20 p-4 text-center">
+                AD SPACE - In-Tool Ad
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+    <script src="components.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script>
+        const generateBtn = document.getElementById('generate-btn');
+        const qrTextInput = document.getElementById('qr-text');
+        const qrCodeContainer = document.getElementById('qr-code-container');
+
+        generateBtn.addEventListener('click', () => {
+            const text = qrTextInput.value;
+            if (text) {
+                qrCodeContainer.innerHTML = ''; // Clear previous QR code
+                new QRious({
+                    element: qrCodeContainer,
+                    value: text,
+                    size: 256,
+                });
+            }
+        });
+    </script>
+</body>
+</html>

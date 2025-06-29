@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Merger - Trae Tools</title>
+    <meta name="description" content="Combine multiple PDF files into a single document quickly and easily. Our free PDF merger maintains document quality and formatting.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-8 logo-3d">PDF Merger</h1>
+        <div class="bg-white/10 p-8 rounded-xl">
+            <div>
+                <label for="pdf-files" class="block mb-2 font-bold">Select PDF files to merge:</label>
+                <input type="file" id="pdf-files" multiple accept=".pdf" class="w-full p-2 rounded bg-gray-800 border border-gray-700">
+                <button id="merge-btn" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Merge PDFs
+                </button>
+            </div>
+            <!-- Ad Space -->
+            <div class="mt-8 bg-black/20 p-4 text-center">
+                AD SPACE - In-Tool Ad
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib"></script>
+    <script>
+        const mergeBtn = document.getElementById('merge-btn');
+        const pdfFilesInput = document.getElementById('pdf-files');
+
+        mergeBtn.addEventListener('click', async () => {
+            const { PDFDocument } = PDFLib;
+            const mergedPdf = await PDFDocument.create();
+
+            for (const file of pdfFilesInput.files) {
+                const pdfBytes = await file.arrayBuffer();
+                const pdfDoc = await PDFDocument.load(pdfBytes);
+                const copiedPages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+                copiedPages.forEach((page) => {
+                    mergedPdf.addPage(page);
+                });
+            }
+
+            const mergedPdfBytes = await mergedPdf.save();
+            const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'merged.pdf';
+            link.click();
+        });
+    </script>
+</body>
+</html>

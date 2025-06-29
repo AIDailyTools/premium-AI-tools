@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch - Trae Tools</title>
+    <meta name="description" content="A simple and accurate online stopwatch with lap functionality. Perfect for timing activities, workouts, and more.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-8 logo-3d">Stopwatch</h1>
+        <div class="bg-white/10 p-8 rounded-xl">
+            <div class="max-w-md mx-auto text-center">
+                <div class="text-6xl font-mono mb-8" id="display">00:00:00.000</div>
+                <div class="flex justify-center gap-4 mb-8">
+                    <button id="start-btn" class="px-6 py-3 rounded-full bg-green-600 hover:bg-green-700 transition-colors">Start</button>
+                    <button id="stop-btn" class="px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 transition-colors">Stop</button>
+                    <button id="reset-btn" class="px-6 py-3 rounded-full bg-gray-600 hover:bg-gray-700 transition-colors">Reset</button>
+                    <button id="lap-btn" class="px-6 py-3 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors">Lap</button>
+                </div>
+                <ul id="laps" class="text-left"></ul>
+            </div>
+            <!-- Ad Space -->
+            <div class="mt-8 bg-black/20 p-4 text-center">
+                AD SPACE - In-Tool Ad
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+    <script src="components.js"></script>
+    <script>
+        const display = document.getElementById('display');
+        const startBtn = document.getElementById('start-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const lapBtn = document.getElementById('lap-btn');
+        const lapsList = document.getElementById('laps');
+
+        let startTime, elapsedTime = 0, timerInterval;
+
+        function formatTime(ms) {
+            const date = new Date(ms);
+            const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+            const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+            const milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0');
+            return `${minutes}:${seconds}.${milliseconds}`;
+        }
+
+        function printTime() {
+            elapsedTime = Date.now() - startTime;
+            display.textContent = formatTime(elapsedTime);
+        }
+
+        startBtn.addEventListener('click', () => {
+            startTime = Date.now() - elapsedTime;
+            timerInterval = setInterval(printTime, 10);
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+        });
+
+        stopBtn.addEventListener('click', () => {
+            clearInterval(timerInterval);
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+        });
+
+        resetBtn.addEventListener('click', () => {
+            clearInterval(timerInterval);
+            display.textContent = '00:00:00.000';
+            elapsedTime = 0;
+            lapsList.innerHTML = '';
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+        });
+
+        lapBtn.addEventListener('click', () => {
+            if (timerInterval) {
+                const lapTime = document.createElement('li');
+                lapTime.textContent = `Lap ${lapsList.children.length + 1}: ${display.textContent}`;
+                lapsList.appendChild(lapTime);
+            }
+        });
+
+        stopBtn.disabled = true;
+    </script>
+</body>
+</html>

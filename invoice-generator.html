@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Generator - Trae Tools</title>
+    <meta name="description" content="Create and download professional PDF invoices for free. Our invoice generator is easy to use and perfect for freelancers and small businesses.">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-8 logo-3d">Invoice Generator</h1>
+        <div class="bg-white/10 p-8 rounded-xl">
+            <div id="invoice-form" class="max-w-4xl mx-auto text-gray-200">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <!-- From Section -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-bold">From</h3>
+                        <input type="text" id="from-name" placeholder="Your Name / Company" class="w-full p-3 rounded bg-white/10">
+                        <textarea id="from-address" placeholder="Your Address" rows="3" class="w-full p-3 rounded bg-white/10"></textarea>
+                    </div>
+                    <!-- To Section -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-bold">To</h3>
+                        <input type="text" id="to-name" placeholder="Client's Name / Company" class="w-full p-3 rounded bg-white/10">
+                        <textarea id="to-address" placeholder="Client's Address" rows="3" class="w-full p-3 rounded bg-white/10"></textarea>
+                    </div>
+                </div>
+
+                <!-- Invoice Details -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                    <input type="text" id="invoice-number" placeholder="Invoice #" class="w-full p-3 rounded bg-white/10">
+                    <input type="date" id="invoice-date" class="w-full p-3 rounded bg-white/10">
+                    <input type="date" id="due-date" class="w-full p-3 rounded bg-white/10">
+                </div>
+
+                <!-- Line Items -->
+                <div id="line-items" class="space-y-4 mb-8">
+                    <h3 class="text-xl font-bold">Items</h3>
+                    <div class="line-item flex gap-4">
+                        <input type="text" class="item-description w-full p-3 rounded bg-white/10" placeholder="Item Description">
+                        <input type="number" class="item-quantity p-3 rounded bg-white/10 w-24" placeholder="Qty" value="1">
+                        <input type="number" class="item-price p-3 rounded bg-white/10 w-32" placeholder="Price">
+                        <button class="remove-item-btn p-3 rounded bg-red-600 hover:bg-red-700">X</button>
+                    </div>
+                </div>
+                <button id="add-item-btn" class="py-2 px-4 rounded bg-blue-600 hover:bg-blue-700 mb-8">+ Add Item</button>
+
+                <!-- Totals -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                    <input type="number" id="tax-rate" placeholder="Tax Rate (%)" class="w-full p-3 rounded bg-white/10">
+                </div>
+
+                <!-- Notes -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold">Notes</h3>
+                    <textarea id="notes" placeholder="Any additional notes..." rows="4" class="w-full p-3 rounded bg-white/10"></textarea>
+                </div>
+
+                <button id="generate-pdf-btn" class="w-full py-4 rounded-full bg-green-600 hover:bg-green-700 text-lg font-bold">Generate & Download PDF</button>
+            </div>
+            <!-- Ad Space -->
+            <div class="mt-8 bg-black/20 p-4 text-center">
+                AD SPACE - In-Tool Ad
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+    <script src="components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const addItemBtn = document.getElementById('add-item-btn');
+            const lineItemsContainer = document.getElementById('line-items');
+            const generatePdfBtn = document.getElementById('generate-pdf-btn');
+
+            // Add new line item
+            addItemBtn.addEventListener('click', () => {
+                const newItem = document.createElement('div');
+                newItem.className = 'line-item flex gap-4 mt-4';
+                newItem.innerHTML = `
+                    <input type="text" class="item-description w-full p-3 rounded bg-white/10" placeholder="Item Description">
+                    <input type="number" class="item-quantity p-3 rounded bg-white/10 w-24" placeholder="Qty" value="1">
+                    <input type="number" class="item-price p-3 rounded bg-white/10 w-32" placeholder="Price">
+                    <button class="remove-item-btn p-3 rounded bg-red-600 hover:bg-red-700">X</button>
+                `;
+                lineItemsContainer.appendChild(newItem);
+            });
+
+            // Remove line item
+            lineItemsContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-item-btn')) {
+                    e.target.parentElement.remove();
+                }
+            });
+
+            // Generate PDF
+            generatePdfBtn.addEventListener('click', () => {
+                const { jsPDF } = window.jspdf;
+                const fromName = document.getElementById('from-name').value;
+                const fromAddress = document.getElementById('from-address').value;
+                const toName = document.getElementById('to-name').value;
+                const toAddress = document.getElementById('to-address').value;
+                const invoiceNumber = document.getElementById('invoice-number').value;
+                const invoiceDate = document.getElementById('invoice-date').value;
+                const dueDate = document.getElementById('due-date').value;
+                const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
+                const notes = document.getElementById('notes').value;
+
+                let subtotal = 0;
+                let itemsHtml = '';
+                document.querySelectorAll('.line-item').forEach(item => {
+                    const description = item.querySelector('.item-description').value;
+                    const quantity = parseFloat(item.querySelector('.item-quantity').value) || 0;
+                    const price = parseFloat(item.querySelector('.item-price').value) || 0;
+                    const total = quantity * price;
+                    subtotal += total;
+                    itemsHtml += `
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${description}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${quantity}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${price.toFixed(2)}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${total.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+
+                const tax = subtotal * (taxRate / 100);
+                const total = subtotal + tax;
+
+                const invoiceHtml = `
+                    <div id="invoice-preview" style="padding: 20px; font-family: Arial, sans-serif; color: #333; background-color: #fff; width: 800px;">
+                        <h1 style="text-align: center; color: #333;">INVOICE</h1>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                            <div>
+                                <strong>From:</strong><br>
+                                ${fromName}<br>
+                                ${fromAddress.replace(/\n/g, '<br>')}
+                            </div>
+                            <div>
+                                <strong>To:</strong><br>
+                                ${toName}<br>
+                                ${toAddress.replace(/\n/g, '<br>')}
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                            <div><strong>Invoice #:</strong> ${invoiceNumber}</div>
+                            <div><strong>Date:</strong> ${invoiceDate}</div>
+                            <div><strong>Due Date:</strong> ${dueDate}</div>
+                        </div>
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                            <thead>
+                                <tr>
+                                    <th style="padding: 8px; border: 1px solid #ddd; background-color: #f2f2f2; text-align: left;">Description</th>
+                                    <th style="padding: 8px; border: 1px solid #ddd; background-color: #f2f2f2; text-align: right;">Quantity</th>
+                                    <th style="padding: 8px; border: 1px solid #ddd; background-color: #f2f2f2; text-align: right;">Price</th>
+                                    <th style="padding: 8px; border: 1px solid #ddd; background-color: #f2f2f2; text-align: right;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${itemsHtml}
+                            </tbody>
+                        </table>
+                        <div style="text-align: right; margin-bottom: 20px;">
+                            <div><strong>Subtotal:</strong> ${subtotal.toFixed(2)}</div>
+                            <div><strong>Tax (${taxRate}%):</strong> ${tax.toFixed(2)}</div>
+                            <div style="font-size: 1.2em;"><strong>Total:</strong> ${total.toFixed(2)}</div>
+                        </div>
+                        <div>
+                            <strong>Notes:</strong><br>
+                            ${notes.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                `;
+
+                const tempContainer = document.createElement('div');
+                tempContainer.style.position = 'absolute';
+                tempContainer.style.left = '-9999px';
+                tempContainer.innerHTML = invoiceHtml;
+                document.body.appendChild(tempContainer);
+
+                html2canvas(document.getElementById('invoice-preview')).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.save(`invoice-${invoiceNumber || 'generated'}.pdf`);
+                    document.body.removeChild(tempContainer);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

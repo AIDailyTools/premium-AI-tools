@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Editor - Trae Tools</title>
+    <meta name="description" content="Edit your images online with our free image editor. Crop, resize, apply filters like grayscale and sepia, and rotate your images with ease.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-8 logo-3d">Image Editor</h1>
+        <div class="bg-white/10 p-8 rounded-xl">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="md:col-span-2">
+                    <div class="mb-4">
+                        <label for="image-upload" class="block mb-2 font-bold">Upload Image:</label>
+                        <input type="file" id="image-upload" accept="image/*" class="w-full p-2 rounded bg-gray-800 border border-gray-700">
+                    </div>
+                    <div class="bg-black/20" style="height: 500px;">
+                        <img id="image-to-edit" style="max-width: 100%; display: block;">
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Controls</h3>
+                    <button id="crop-btn" class="w-full mb-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Crop & Download</button>
+                    <button id="zoom-in-btn" class="w-full mb-2 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Zoom In</button>
+                    <button id="zoom-out-btn" class="w-full mb-4 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Zoom Out</button>
+                    
+                    <h4 class="font-bold mt-4 mb-2">Resize</h4>
+                    <div class="flex gap-2 mb-2">
+                        <input type="number" id="resize-width" placeholder="Width" class="w-1/2 p-2 rounded bg-gray-800 border border-gray-700">
+                        <input type="number" id="resize-height" placeholder="Height" class="w-1/2 p-2 rounded bg-gray-800 border border-gray-700">
+                    </div>
+                    <button id="resize-btn" class="w-full mb-4 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Resize & Download</button>
+
+                    <h4 class="font-bold mt-4 mb-2">Filters</h4>
+                    <div class="grid grid-cols-2 gap-2 mb-4">
+                        <button id="grayscale-btn" class="filter-btn w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Grayscale</button>
+                        <button id="sepia-btn" class="filter-btn w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Sepia</button>
+                        <button id="invert-btn" class="filter-btn w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Invert</button>
+                        <button id="reset-filters-btn" class="filter-btn w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Reset</button>
+                    </div>
+
+                    <h4 class="font-bold mt-4 mb-2">Rotate</h4>
+                    <div class="flex gap-2">
+                        <button id="rotate-left-btn" class="w-1/2 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded">-90°</button>
+                        <button id="rotate-right-btn" class="w-1/2 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded">+90°</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Ad Space -->
+            <div class="mt-8 bg-black/20 p-4 text-center">
+                AD SPACE - In-Tool Ad
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+    <script src="components.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script>
+        const imageUpload = document.getElementById('image-upload');
+        const imageToEdit = document.getElementById('image-to-edit');
+        const cropBtn = document.getElementById('crop-btn');
+        const zoomInBtn = document.getElementById('zoom-in-btn');
+        const zoomOutBtn = document.getElementById('zoom-out-btn');
+        const resizeBtn = document.getElementById('resize-btn');
+        const resizeWidth = document.getElementById('resize-width');
+        const resizeHeight = document.getElementById('resize-height');
+        const grayscaleBtn = document.getElementById('grayscale-btn');
+        const sepiaBtn = document.getElementById('sepia-btn');
+        const invertBtn = document.getElementById('invert-btn');
+        const resetFiltersBtn = document.getElementById('reset-filters-btn');
+        const rotateLeftBtn = document.getElementById('rotate-left-btn');
+        const rotateRightBtn = document.getElementById('rotate-right-btn');
+
+        let cropper;
+        let currentFilters = [];
+
+        imageUpload.addEventListener('change', (e) => {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    imageToEdit.src = reader.result;
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                    cropper = new Cropper(imageToEdit, {
+                        aspectRatio: NaN, // Free crop
+                        viewMode: 1,
+                    });
+                };
+                reader.readAsDataURL(files[0]);
+            }
+        });
+
+        cropBtn.addEventListener('click', () => {
+            if (!cropper) return;
+            const canvas = cropper.getCroppedCanvas();
+            canvas.toBlob((blob) => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'cropped-image.png';
+                link.click();
+            });
+        });
+
+        zoomInBtn.addEventListener('click', () => cropper && cropper.zoom(0.1));
+        zoomOutBtn.addEventListener('click', () => cropper && cropper.zoom(-0.1));
+
+        resizeBtn.addEventListener('click', () => {
+            if (!cropper) return;
+            const width = parseInt(resizeWidth.value);
+            const height = parseInt(resizeHeight.value);
+            if(isNaN(width) || isNaN(height)) return;
+
+            const canvas = cropper.getCroppedCanvas({ width, height });
+            applyFiltersAndDownload(canvas, `resized-image-${width}x${height}.png`);
+        });
+
+        // Filter and Rotate Logic
+        grayscaleBtn.addEventListener('click', () => addFilter('grayscale(100%)'));
+        sepiaBtn.addEventListener('click', () => addFilter('sepia(100%)'));
+        invertBtn.addEventListener('click', () => addFilter('invert(100%)'));
+        resetFiltersBtn.addEventListener('click', () => {
+            currentFilters = [];
+            applyFiltersToImage();
+        });
+
+        rotateLeftBtn.addEventListener('click', () => cropper && cropper.rotate(-90));
+        rotateRightBtn.addEventListener('click', () => cropper && cropper.rotate(90));
+
+        function addFilter(filter) {
+            if (!currentFilters.includes(filter)) {
+                currentFilters.push(filter);
+            }
+            applyFiltersToImage();
+        }
+
+        function applyFiltersToImage() {
+            if (cropper) {
+                const container = cropper.getContainerData();
+                const image = imageToEdit;
+                image.style.filter = currentFilters.join(' ');
+            }
+        }
+
+        function applyFiltersAndDownload(canvas, filename) {
+            const ctx = canvas.getContext('2d');
+            ctx.filter = currentFilters.join(' ');
+            ctx.drawImage(canvas, 0, 0);
+
+            canvas.toBlob((blob) => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>

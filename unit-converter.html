@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Converter - Trae Tools</title>
+    <meta name="description" content="A versatile online unit converter for length, weight, temperature, and more. Quickly and accurately convert between different units of measurement.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-8 logo-3d">Unit Converter</h1>
+        <div class="bg-white/10 p-8 rounded-xl max-w-lg mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div>
+                    <label for="inputValue" class="block mb-2">Value</label>
+                    <input type="number" id="inputValue" class="w-full p-2 rounded bg-white/20" placeholder="Enter value">
+                </div>
+                <div>
+                    <label for="fromUnit" class="block mb-2">From</label>
+                    <select id="fromUnit" class="w-full p-2 rounded bg-white/20">
+                        <option>Meters</option>
+                        <option>Kilometers</option>
+                        <option>Miles</option>
+                        <option>Feet</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="toUnit" class="block mb-2">To</label>
+                    <select id="toUnit" class="w-full p-2 rounded bg-white/20">
+                        <option>Meters</option>
+                        <option>Kilometers</option>
+                        <option>Miles</option>
+                        <option>Feet</option>
+                    </select>
+                </div>
+            </div>
+            <button id="convertBtn" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded mt-6">Convert</button>
+            <div id="result" class="mt-6 text-xl font-bold"></div>
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+    <script src="components.js"></script>
+    <script>
+        document.getElementById('convertBtn').addEventListener('click', () => {
+            const inputValue = document.getElementById('inputValue').value;
+            const fromUnit = document.getElementById('fromUnit').value;
+            const toUnit = document.getElementById('toUnit').value;
+            const resultDiv = document.getElementById('result');
+
+            if (inputValue === '') {
+                resultDiv.innerText = 'Please enter a value.';
+                return;
+            }
+
+            const conversions = {
+                'Meters': 1,
+                'Kilometers': 1000,
+                'Miles': 1609.34,
+                'Feet': 0.3048
+            };
+
+            const valueInMeters = inputValue * conversions[fromUnit];
+            const result = valueInMeters / conversions[toUnit];
+
+            resultDiv.innerText = `${inputValue} ${fromUnit} = ${result.toFixed(4)} ${toUnit}`;
+        });
+    </script>
+</body>
+</html>

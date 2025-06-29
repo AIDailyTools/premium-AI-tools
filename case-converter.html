@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Converter - Trae Tools</title>
+    <meta name="description" content="Easily convert text between different cases: lowercase, uppercase, sentence case, capitalized case, and more with our free online case converter.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-8 logo-3d">Case Converter</h1>
+        <div class="bg-white/10 p-8 rounded-xl">
+            <div class="max-w-2xl mx-auto">
+                <textarea id="text-input" rows="10" class="w-full p-4 rounded bg-white/10" placeholder="Start typing or paste your text here..."></textarea>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                    <button id="upper-btn" class="w-full py-3 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors">UPPER CASE</button>
+                    <button id="lower-btn" class="w-full py-3 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors">lower case</button>
+                    <button id="sentence-btn" class="w-full py-3 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors">Sentence case</button>
+                    <button id="title-btn" class="w-full py-3 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors">Title Case</button>
+                </div>
+            </div>
+            <!-- Ad Space -->
+            <div class="mt-8 bg-black/20 p-4 text-center">
+                AD SPACE - In-Tool Ad
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+    <script src="components.js"></script>
+    <script>
+        const textInput = document.getElementById('text-input');
+        const upperBtn = document.getElementById('upper-btn');
+        const lowerBtn = document.getElementById('lower-btn');
+        const sentenceBtn = document.getElementById('sentence-btn');
+        const titleBtn = document.getElementById('title-btn');
+
+        upperBtn.addEventListener('click', () => {
+            textInput.value = textInput.value.toUpperCase();
+        });
+
+        lowerBtn.addEventListener('click', () => {
+            textInput.value = textInput.value.toLowerCase();
+        });
+
+        sentenceBtn.addEventListener('click', () => {
+            const text = textInput.value.toLowerCase();
+            textInput.value = text.charAt(0).toUpperCase() + text.slice(1);
+        });
+
+        titleBtn.addEventListener('click', () => {
+            const text = textInput.value.toLowerCase().split(' ');
+            for (let i = 0; i < text.length; i++) {
+                text[i] = text[i].charAt(0).toUpperCase() + text[i].slice(1);
+            }
+            textInput.value = text.join(' ');
+        });
+    </script>
+</body>
+</html>

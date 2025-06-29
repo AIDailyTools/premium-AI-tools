@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener - Trae Tools</title>
+    <meta name="description" content="Shorten long URLs quickly and easily with our free URL shortener. Create clean and manageable links in seconds.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-8 logo-3d">URL Shortener</h1>
+        <div class="bg-white/10 p-8 rounded-xl">
+            <div class="max-w-2xl mx-auto">
+                <div class="flex gap-4">
+                    <input type="url" id="long-url-input" class="w-full p-4 rounded-full bg-white/10" placeholder="Enter a long URL to shorten...">
+                    <button id="shorten-btn" class="py-3 px-8 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors">Shorten</button>
+                </div>
+                <div id="result" class="mt-6 hidden">
+                    <h3 class="text-lg font-semibold">Your Shortened URL:</h3>
+                    <div class="relative mt-2">
+                        <input type="text" id="short-url-output" readonly class="w-full py-3 px-4 rounded-full bg-white/10 border-2 border-transparent pr-16">
+                        <button id="copy-btn" class="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors">Copy</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Ad Space -->
+            <div class="mt-8 bg-black/20 p-4 text-center">
+                AD SPACE - In-Tool Ad
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+    <script src="components.js"></script>
+    <script>
+        const longUrlInput = document.getElementById('long-url-input');
+        const shortenBtn = document.getElementById('shorten-btn');
+        const resultDiv = document.getElementById('result');
+        const shortUrlOutput = document.getElementById('short-url-output');
+        const copyBtn = document.getElementById('copy-btn');
+
+        shortenBtn.addEventListener('click', async () => {
+            const longUrl = longUrlInput.value;
+            if (!longUrl || !isValidUrl(longUrl)) {
+                alert('Please enter a valid URL.');
+                return;
+            }
+
+            shortenBtn.disabled = true;
+            shortenBtn.textContent = 'Shortening...';
+
+            try {
+                const response = await fetch(`https://is.gd/create.php?format=json&url=${encodeURIComponent(longUrl)}`);
+                const data = await response.json();
+
+                if (data.shorturl) {
+                    shortUrlOutput.value = data.shorturl;
+                    resultDiv.classList.remove('hidden');
+                } else {
+                    alert(`Error: ${data.errormessage}`);
+                }
+            } catch (error) {
+                alert('An error occurred. Please try again later.');
+            }
+
+            shortenBtn.disabled = false;
+            shortenBtn.textContent = 'Shorten';
+        });
+
+        copyBtn.addEventListener('click', () => {
+            if (shortUrlOutput.value) {
+                navigator.clipboard.writeText(shortUrlOutput.value).then(() => {
+                    alert('Copied to clipboard!');
+                });
+            }
+        });
+
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+    </script>
+</body>
+</html>

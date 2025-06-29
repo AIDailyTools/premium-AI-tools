@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to Excel Converter - Trae Tools</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-8 logo-3d">PDF to Excel Converter</h1>
+        <div class="bg-white/10 p-8 rounded-xl">
+            <div>
+                <label for="pdf-file" class="block mb-2 font-bold">Select a PDF file to convert:</label>
+                <input type="file" id="pdf-file" accept=".pdf" class="w-full p-2 rounded bg-gray-800 border border-gray-700">
+                <button id="convert-btn" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Convert to Excel
+                </button>
+            </div>
+            <!-- Ad Space -->
+            <div class="mt-8 bg-black/20 p-4 text-center">
+                AD SPACE - In-Tool Ad
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+    <script src="components.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <script>
+        const convertBtn = document.getElementById('convert-btn');
+        const pdfFileInput = document.getElementById('pdf-file');
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js`;
+
+        convertBtn.addEventListener('click', async () => {
+            const file = pdfFileInput.files[0];
+            if (!file) return;
+
+            convertBtn.disabled = true;
+            convertBtn.textContent = 'Converting...';
+
+            try {
+                const fileReader = new FileReader();
+                fileReader.onload = async function() {
+                    const typedarray = new Uint8Array(this.result);
+                    const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                    const table = await extractTable(pdf);
+                    if (table.length > 0) {
+                        const ws = XLSX.utils.aoa_to_sheet(table);
+                        const wb = XLSX.utils.book_new();
+                        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+                        XLSX.writeFile(wb, 'converted.xlsx');
+                    } else {
+                        alert('No table found in the PDF.');
+                    }
+                };
+                fileReader.readAsArrayBuffer(file);
+            } catch (error) {
+                console.error('Error converting PDF:', error);
+                alert('An error occurred during conversion.');
+            } finally {
+                convertBtn.disabled = false;
+                convertBtn.textContent = 'Convert to Excel';
+            }
+        });
+
+        async function extractTable(pdf) {
+            let allChars = [];
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const textContent = await page.getTextContent();
+                const viewport = page.getViewport({ scale: 1.0 });
+                const chars = textContent.items.map(item => {
+                    const transform = item.transform;
+                    const x = transform[4];
+                    const y = transform[5];
+                    return { c: item.str, x, y };
+                });
+                allChars = allChars.concat(chars);
+            }
+
+            if (allChars.length === 0) {
+                return [];
+            }
+
+            allChars.sort((a, b) => {
+                if (Math.abs(a.y - b.y) < 5) { // Same line
+                    return a.x - b.x;
+                } else {
+                    return b.y - a.y; // Different lines
+                }
+            });
+
+            let rows = [];
+            let currentRow = [];
+            let lastY = allChars[0].y;
+            let lastX = -1;
+
+            for (const char of allChars) {
+                if (Math.abs(char.y - lastY) > 5) { // New line
+                    rows.push(currentRow.join('').split(/\s{2,}/));
+                    currentRow = [char.c];
+                    lastY = char.y;
+                } else {
+                    if(lastX !== -1 && char.x - lastX > 5) { // Space between words
+                        currentRow.push(' ');
+                    }
+                    currentRow.push(char.c);
+                }
+                lastX = char.x;
+            }
+            rows.push(currentRow.join('').split(/\s{2,}/));
+
+            return rows.map(row => row.map(cell => cell.trim()));
+        }
+    </script>
+</body>
+</html>

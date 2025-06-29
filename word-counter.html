@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Counter - Trae Tools</title>
+    <meta name="description" content="Count words, characters, and sentences in your text with our online word counter. A useful tool for writers, students, and professionals.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-8 logo-3d">Word Counter</h1>
+        <div class="bg-white/10 p-8 rounded-xl">
+            <div class="max-w-2xl mx-auto">
+                <textarea id="text-input" rows="10" class="w-full p-4 rounded bg-white/10" placeholder="Start typing or paste your text here..."></textarea>
+                <div class="grid grid-cols-3 gap-4 mt-4 text-center">
+                    <div class="bg-white/10 p-4 rounded">
+                        <h3 class="text-2xl font-bold" id="word-count">0</h3>
+                        <p>Words</p>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded">
+                        <h3 class="text-2xl font-bold" id="char-count">0</h3>
+                        <p>Characters</p>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded">
+                        <h3 class="text-2xl font-bold" id="sentence-count">0</h3>
+                        <p>Sentences</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Ad Space -->
+            <div class="mt-8 bg-black/20 p-4 text-center">
+                AD SPACE - In-Tool Ad
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+    <script src="components.js"></script>
+    <script>
+        const textInput = document.getElementById('text-input');
+        const wordCountEl = document.getElementById('word-count');
+        const charCountEl = document.getElementById('char-count');
+        const sentenceCountEl = document.getElementById('sentence-count');
+
+        textInput.addEventListener('input', () => {
+            const text = textInput.value.trim();
+
+            // Word count
+            const words = text.split(/\s+/).filter(word => word.length > 0);
+            wordCountEl.textContent = words.length;
+
+            // Character count
+            charCountEl.textContent = text.length;
+
+            // Sentence count
+            const sentences = text.split(/[.!?]+/).filter(sentence => sentence.length > 0);
+            sentenceCountEl.textContent = sentences.length;
+        });
+    </script>
+</body>
+</html>
