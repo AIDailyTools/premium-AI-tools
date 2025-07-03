@@ -8,23 +8,43 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="gradient-bg min-h-screen text-gray-100">
+<body class="bg-gray-900 text-white">
     <!-- Navigation -->
     <div id="main-nav"></div>
 
     <!-- Tool Content -->
-    <main class="container mx-auto px-4 py-16">
-        <h1 class="text-4xl font-bold mb-8 logo-3d">Stopwatch</h1>
-        <div class="bg-white/10 p-8 rounded-xl">
-            <div class="max-w-md mx-auto text-center">
-                <div class="text-6xl font-mono mb-8" id="display">00:00:00.000</div>
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-5xl font-bold text-center mb-2 text-white">Online Stopwatch</h1>
+        <p class="text-center text-gray-400 mb-8">A simple, fast, and accurate stopwatch and countdown timer. Use the 'Start' button to begin timing, 'Stop' to pause, 'Reset' to clear, and 'Lap' to record split times. This tool is perfect for tracking time for workouts, cooking, or any activity where precision is key.</p>
+        <div class="bg-gray-800 p-8 rounded-xl shadow-lg">
+            <div class="max-w-2xl mx-auto text-center">
+                <div class="text-8xl font-mono mb-8 tracking-widest" id="display">00:00:00<span class="text-5xl">.000</span></div>
                 <div class="flex justify-center gap-4 mb-8">
-                    <button id="start-btn" class="px-6 py-3 rounded-full bg-green-600 hover:bg-green-700 transition-colors">Start</button>
-                    <button id="stop-btn" class="px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 transition-colors">Stop</button>
-                    <button id="reset-btn" class="px-6 py-3 rounded-full bg-gray-600 hover:bg-gray-700 transition-colors">Reset</button>
-                    <button id="lap-btn" class="px-6 py-3 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors">Lap</button>
+                    <button id="start-btn" class="px-8 py-4 rounded-lg bg-green-500 hover:bg-green-600 text-white font-bold text-2xl transition-all duration-200 transform hover:scale-105">Start</button>
+                    <button id="stop-btn" class="px-8 py-4 rounded-lg bg-red-500 hover:bg-red-600 text-white font-bold text-2xl transition-all duration-200 transform hover:scale-105">Stop</button>
+                    <button id="reset-btn" class="px-8 py-4 rounded-lg bg-gray-500 hover:bg-gray-600 text-white font-bold text-2xl transition-all duration-200 transform hover:scale-105">Reset</button>
+                    <button id="lap-btn" class="px-8 py-4 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-bold text-2xl transition-all duration-200 transform hover:scale-105">Lap</button>
                 </div>
-                <ul id="laps" class="text-left"></ul>
+                <ul id="laps" class="text-left mt-8 text-2xl space-y-2"></ul>
+             </div>
+        </div>
+
+        <div class="mt-16">
+            <h2 class="text-4xl font-bold text-center mb-8 text-white">Countdown Timer</h2>
+            <div class="bg-gray-800 p-8 rounded-xl shadow-lg">
+                <div class="max-w-2xl mx-auto text-center">
+                    <div class="text-8xl font-mono mb-8 tracking-widest" id="countdown-display">00:00:00</div>
+                    <div class="flex justify-center gap-4 mb-8" id="countdown-inputs">
+                        <input type="number" id="hours-input" class="w-24 p-2 rounded bg-gray-700 text-white text-center text-2xl" placeholder="HH" min="0">
+                        <input type="number" id="minutes-input" class="w-24 p-2 rounded bg-gray-700 text-white text-center text-2xl" placeholder="MM" min="0" max="59">
+                        <input type="number" id="seconds-input" class="w-24 p-2 rounded bg-gray-700 text-white text-center text-2xl" placeholder="SS" min="0" max="59">
+                    </div>
+                    <div class="flex justify-center gap-4 mb-8">
+                        <button id="start-countdown-btn" class="px-8 py-4 rounded-lg bg-green-500 hover:bg-green-600 text-white font-bold text-2xl transition-all duration-200 transform hover:scale-105">Start</button>
+                        <button id="stop-countdown-btn" class="px-8 py-4 rounded-lg bg-red-500 hover:bg-red-600 text-white font-bold text-2xl transition-all duration-200 transform hover:scale-105">Stop</button>
+                        <button id="reset-countdown-btn" class="px-8 py-4 rounded-lg bg-gray-500 hover:bg-gray-600 text-white font-bold text-2xl transition-all duration-200 transform hover:scale-105">Reset</button>
+                    </div>
+                </div>
             </div>
             <!-- Ad Space -->
             <div class="mt-8 bg-black/20 p-4 text-center">
@@ -48,6 +68,13 @@
 
         function formatTime(ms) {
             const date = new Date(ms);
+            const hours = String(date.getUTCHours()).padStart(2, '0');
+            const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+            const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+            const milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0');
+            return `${hours}:${minutes}:${seconds}<span class="text-5xl">.${milliseconds}</span>`;
+        }
+            const date = new Date(ms);
             const minutes = String(date.getUTCMinutes()).padStart(2, '0');
             const seconds = String(date.getUTCSeconds()).padStart(2, '0');
             const milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0');
@@ -56,7 +83,7 @@
 
         function printTime() {
             elapsedTime = Date.now() - startTime;
-            display.textContent = formatTime(elapsedTime);
+            display.innerHTML = formatTime(elapsedTime);
         }
 
         startBtn.addEventListener('click', () => {
@@ -90,6 +117,98 @@
         });
 
         stopBtn.disabled = true;
+
+        // Countdown Timer
+        const countdownDisplay = document.getElementById('countdown-display');
+        const hoursInput = document.getElementById('hours-input');
+        const minutesInput = document.getElementById('minutes-input');
+        const secondsInput = document.getElementById('seconds-input');
+        const startCountdownBtn = document.getElementById('start-countdown-btn');
+        const stopCountdownBtn = document.getElementById('stop-countdown-btn');
+        const resetCountdownBtn = document.getElementById('reset-countdown-btn');
+
+        let countdownInterval;
+        let endTime;
+        let countdownPaused = false;
+        let remainingTime = 0;
+
+        function formatCountdownTime(ms) {
+            if (ms < 0) ms = 0;
+            const totalSeconds = Math.floor(ms / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function startCountdown() {
+            let hours = parseInt(hoursInput.value) || 0;
+            let minutes = parseInt(minutesInput.value) || 0;
+            let seconds = parseInt(secondsInput.value) || 0;
+
+            let totalMilliseconds;
+
+            if (countdownPaused && remainingTime > 0) {
+                totalMilliseconds = remainingTime;
+                countdownPaused = false;
+            } else {
+                totalMilliseconds = (hours * 3600 + minutes * 60 + seconds) * 1000;
+            }
+
+
+            if (totalMilliseconds <= 0) return;
+
+            endTime = Date.now() + totalMilliseconds;
+
+            countdownInterval = setInterval(() => {
+                remainingTime = endTime - Date.now();
+                countdownDisplay.textContent = formatCountdownTime(remainingTime);
+
+                if (remainingTime < 100) {
+                    clearInterval(countdownInterval);
+                    countdownDisplay.textContent = "00:00:00";
+                    alert("Time's up!");
+                    resetCountdown();
+                }
+            }, 100);
+
+            startCountdownBtn.disabled = true;
+            stopCountdownBtn.disabled = false;
+            resetCountdownBtn.disabled = false;
+            hoursInput.disabled = true;
+            minutesInput.disabled = true;
+            secondsInput.disabled = true;
+        }
+
+        function stopCountdown() {
+            clearInterval(countdownInterval);
+            countdownPaused = true;
+            startCountdownBtn.disabled = false;
+            stopCountdownBtn.disabled = true;
+        }
+
+        function resetCountdown() {
+            clearInterval(countdownInterval);
+            countdownDisplay.textContent = "00:00:00";
+            remainingTime = 0;
+            countdownPaused = false;
+            startCountdownBtn.disabled = false;
+            stopCountdownBtn.disabled = true;
+            resetCountdownBtn.disabled = true;
+            hoursInput.disabled = false;
+            minutesInput.disabled = false;
+            secondsInput.disabled = false;
+            hoursInput.value = '';
+            minutesInput.value = '';
+            secondsInput.value = '';
+        }
+
+        startCountdownBtn.addEventListener('click', startCountdown);
+        stopCountdownBtn.addEventListener('click', stopCountdown);
+        resetCountdownBtn.addEventListener('click', resetCountdown);
+
+        stopCountdownBtn.disabled = true;
+        resetCountdownBtn.disabled = true;
     </script>
 </body>
 </html>
