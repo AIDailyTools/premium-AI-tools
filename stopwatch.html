@@ -74,12 +74,6 @@
             const milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0');
             return `${hours}:${minutes}:${seconds}<span class="text-5xl">.${milliseconds}</span>`;
         }
-            const date = new Date(ms);
-            const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-            const seconds = String(date.getUTCSeconds()).padStart(2, '0');
-            const milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0');
-            return `${minutes}:${seconds}.${milliseconds}`;
-        }
 
         function printTime() {
             elapsedTime = Date.now() - startTime;
@@ -101,7 +95,7 @@
 
         resetBtn.addEventListener('click', () => {
             clearInterval(timerInterval);
-            display.textContent = '00:00:00.000';
+            display.innerHTML = '00:00:00<span class="text-5xl">.000</span>';
             elapsedTime = 0;
             lapsList.innerHTML = '';
             startBtn.disabled = false;
@@ -111,7 +105,7 @@
         lapBtn.addEventListener('click', () => {
             if (timerInterval) {
                 const lapTime = document.createElement('li');
-                lapTime.textContent = `Lap ${lapsList.children.length + 1}: ${display.textContent}`;
+                lapTime.innerHTML = `Lap ${lapsList.children.length + 1}: ${display.innerHTML}`;
                 lapsList.appendChild(lapTime);
             }
         });
