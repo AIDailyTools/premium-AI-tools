@@ -3,169 +3,936 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Editor - Trae Tools</title>
-    <meta name="description" content="Edit your images online with our free image editor. Crop, resize, apply filters like grayscale and sepia, and rotate your images with ease.">
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+    <title>PixelCraft Pro - Advanced Image Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Raleway:wght@800&family=Roboto+Slab:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <style>
+        :root {
+            --primary: #6e44ff;
+            --secondary: #ff6b6b;
+            --accent: #1abc9c;
+            --dark: #1a1a2e;
+            --darker: #0d0d1a;
+            --light: #f0f0f5;
+            --panel: rgba(40, 40, 70, 0.9);
+            --toolbar: rgba(30, 30, 60, 0.95);
+            --glass: rgba(255, 255, 255, 0.1);
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--light);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(110, 68, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(255, 107, 107, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 50% 20%, rgba(26, 188, 156, 0.1) 0%, transparent 40%);
+            z-index: -1;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 10px;
+            gap: 10px;
+        }
+        
+        /* Header Styles */
+        .header {
+            background: var(--toolbar);
+            border-radius: 16px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass);
+            z-index: 10;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 15px rgba(110, 68, 255, 0.4);
+        }
+        
+        .logo-text {
+            font-family: 'Raleway', sans-serif;
+            font-weight: 800;
+            font-size: 24px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .top-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        /* 3D Button Styles */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 6px 12px rgba(0, 0, 0, 0.2),
+                inset 0 -3px 8px rgba(0, 0, 0, 0.2),
+                inset 0 3px 8px rgba(255, 255, 255, 0.1);
+            transform: translateY(0);
+        }
+        
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: 
+                0 3px 6px rgba(0, 0, 0, 0.2),
+                inset 0 -2px 6px rgba(0, 0, 0, 0.2),
+                inset 0 2px 6px rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #5a36d9);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #27ae60);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            color: white;
+        }
+        
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent), #16a085);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #e67e22);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #c0392b);
+            color: white;
+        }
+        
+        /* Main Content Area */
+        .main-content {
+            display: flex;
+            flex: 1;
+            gap: 10px;
+            overflow: hidden;
+        }
+        
+        /* Toolbar Styles */
+        .toolbar {
+            width: 70px;
+            background: var(--toolbar);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 8px;
+            gap: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass);
+            z-index: 5;
+        }
+        
+        .tool-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 0;
+            background: var(--panel);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--glass);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tool-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 15px rgba(110, 68, 255, 0.5);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .tool-btn i {
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+        
+        .tool-btn span {
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .tool-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Canvas Area */
+        .canvas-container {
+            flex: 1;
+            background: var(--toolbar);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass);
+            position: relative;
+        }
+        
+        .canvas-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--glass);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .canvas-area {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: 
+                linear-gradient(45deg, #222 25%, transparent 25%, transparent 75%, #222 75%),
+                linear-gradient(45deg, #222 25%, #2a2a2a 25%, #2a2a2a 75%, #222 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            overflow: auto;
+            padding: 20px;
+        }
+        
+        #canvas {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            background: white;
+            border: 1px solid var(--glass);
+        }
+        
+        /* Properties Panel */
+        .properties-panel {
+            width: 300px;
+            background: var(--toolbar);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass);
+            z-index: 5;
+        }
+        
+        .panel-tabs {
+            display: flex;
+            background: var(--panel);
+            border-bottom: 1px solid var(--glass);
+        }
+        
+        .panel-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .panel-tab.active {
+            color: var(--primary);
+        }
+        
+        .panel-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            width: 60%;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+        
+        .panel-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .panel-section {
+            margin-bottom: 25px;
+        }
+        
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--glass);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .panel-title i {
+            color: var(--accent);
+        }
+        
+        .slider-container {
+            margin-bottom: 15px;
+        }
+        
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: var(--glass);
+            border-radius: 10px;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .filter-item {
+            aspect-ratio: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-item:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+        }
+        
+        .filter-item.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+        
+        .filter-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .color-picker-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .color-preview {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 2px solid var(--light);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            background: var(--toolbar);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .properties-panel {
+                width: 250px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .toolbar {
+                width: 60px;
+                padding: 15px 5px;
+            }
+            
+            .tool-btn span {
+                font-size: 10px;
+            }
+            
+            .properties-panel {
+                width: 220px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .toolbar {
+                width: 100%;
+                flex-direction: row;
+                padding: 10px;
+                gap: 8px;
+                overflow-x: auto;
+            }
+            
+            .tool-btn {
+                min-width: 60px;
+            }
+            
+            .properties-panel {
+                width: 100%;
+                height: 300px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .top-actions {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
-<body class="gradient-bg min-h-screen text-gray-100">
-    <!-- Navigation -->
-    <div id="main-nav"></div>
-
-    <!-- Tool Content -->
-    <main class="container mx-auto px-4 py-16">
-        <h1 class="text-4xl font-bold mb-8 logo-3d">Image Editor</h1>
-        <div class="bg-white/10 p-8 rounded-xl">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="md:col-span-2">
-                    <div class="mb-4">
-                        <label for="image-upload" class="block mb-2 font-bold">Upload Image:</label>
-                        <input type="file" id="image-upload" accept="image/*" class="w-full p-2 rounded bg-gray-800 border border-gray-700">
-                    </div>
-                    <div class="bg-black/20" style="height: 500px;">
-                        <img id="image-to-edit" style="max-width: 100%; display: block;">
-                    </div>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-paint-brush"></i>
                 </div>
-                <div>
-                    <h3 class="text-xl font-bold mb-4">Controls</h3>
-                    <button id="crop-btn" class="w-full mb-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Crop & Download</button>
-                    <button id="zoom-in-btn" class="w-full mb-2 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Zoom In</button>
-                    <button id="zoom-out-btn" class="w-full mb-4 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Zoom Out</button>
-                    
-                    <h4 class="font-bold mt-4 mb-2">Resize</h4>
-                    <div class="flex gap-2 mb-2">
-                        <input type="number" id="resize-width" placeholder="Width" class="w-1/2 p-2 rounded bg-gray-800 border border-gray-700">
-                        <input type="number" id="resize-height" placeholder="Height" class="w-1/2 p-2 rounded bg-gray-800 border border-gray-700">
-                    </div>
-                    <button id="resize-btn" class="w-full mb-4 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Resize & Download</button>
+                <div class="logo-text">PixelCraft Pro</div>
+            </div>
+            <div class="top-actions">
+                <button class="btn btn-primary" id="upload-btn">
+                    <i class="fas fa-upload"></i> Upload Image
+                </button>
+                <input type="file" id="image-upload" class="hidden" accept="image/*">
+                <button class="btn btn-success" id="download-btn">
+                    <i class="fas fa-download"></i> Download
+                </button>
+                <button class="btn btn-secondary" id="reset-btn">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+            </div>
+        </header>
 
-                    <h4 class="font-bold mt-4 mb-2">Filters</h4>
-                    <div class="grid grid-cols-2 gap-2 mb-4">
-                        <button id="grayscale-btn" class="filter-btn w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Grayscale</button>
-                        <button id="sepia-btn" class="filter-btn w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Sepia</button>
-                        <button id="invert-btn" class="filter-btn w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Invert</button>
-                        <button id="reset-filters-btn" class="filter-btn w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Reset</button>
-                    </div>
-
-                    <h4 class="font-bold mt-4 mb-2">Rotate</h4>
-                    <div class="flex gap-2">
-                        <button id="rotate-left-btn" class="w-1/2 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded">-90°</button>
-                        <button id="rotate-right-btn" class="w-1/2 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded">+90°</button>
-                    </div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Toolbar -->
+            <div class="toolbar">
+                <div class="tool-btn active" data-tool="adjust">
+                    <i class="fas fa-sliders-h"></i>
+                    <span>Adjust</span>
+                </div>
+                <div class="tool-btn" data-tool="filter">
+                    <i class="fas fa-magic"></i>
+                    <span>Filters</span>
+                </div>
+                <div class="tool-btn" data-tool="crop">
+                    <i class="fas fa-crop-alt"></i>
+                    <span>Crop</span>
+                </div>
+                <div class="tool-btn" data-tool="text">
+                    <i class="fas fa-font"></i>
+                    <span>Text</span>
+                </div>
+                <div class="tool-btn" data-tool="draw">
+                    <i class="fas fa-pencil-alt"></i>
+                    <span>Draw</span>
+                </div>
+                <div class="tool-btn" data-tool="shapes">
+                    <i class="fas fa-shapes"></i>
+                    <span>Shapes</span>
+                </div>
+                <div class="tool-btn" data-tool="layers">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Layers</span>
+                </div>
+                <div class="tool-btn" data-tool="effects">
+                    <i class="fas fa-sparkles"></i>
+                    <span>Effects</span>
                 </div>
             </div>
-            <!-- Ad Space -->
-            <div class="mt-8 bg-black/20 p-4 text-center">
-                AD SPACE - In-Tool Ad
+
+            <!-- Canvas Area -->
+            <div class="canvas-container">
+                <div class="canvas-header">
+                    <div class="canvas-title">
+                        <i class="fas fa-image"></i> Image Editor
+                    </div>
+                    <div class="canvas-actions">
+                        <button class="btn btn-accent" id="zoom-in">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <button class="btn btn-accent" id="zoom-out">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <button class="btn btn-warning" id="rotate-left">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                        <button class="btn btn-warning" id="rotate-right">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="canvas-area">
+                    <canvas id="canvas"></canvas>
+                </div>
+            </div>
+
+            <!-- Properties Panel -->
+            <div class="properties-panel">
+                <div class="panel-tabs">
+                    <div class="panel-tab active">Properties</div>
+                    <div class="panel-tab">Layers</div>
+                    <div class="panel-tab">History</div>
+                </div>
+                <div class="panel-content">
+                    <!-- Adjustments Panel -->
+                    <div class="panel-section">
+                        <div class="panel-title">
+                            <i class="fas fa-sliders-h"></i> Adjustments
+                        </div>
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>Brightness</span>
+                                <span id="brightness-value">0</span>
+                            </div>
+                            <input type="range" id="brightness" min="-1" max="1" step="0.01" value="0">
+                        </div>
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>Contrast</span>
+                                <span id="contrast-value">0</span>
+                            </div>
+                            <input type="range" id="contrast" min="-1" max="1" step="0.01" value="0">
+                        </div>
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>Saturation</span>
+                                <span id="saturation-value">0</span>
+                            </div>
+                            <input type="range" id="saturation" min="-1" max="1" step="0.01" value="0">
+                        </div>
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>Exposure</span>
+                                <span id="exposure-value">0</span>
+                            </div>
+                            <input type="range" id="exposure" min="-1" max="1" step="0.01" value="0">
+                        </div>
+                    </div>
+                    
+                    <!-- Filters Panel -->
+                    <div class="panel-section">
+                        <div class="panel-title">
+                            <i class="fas fa-magic"></i> Filters
+                        </div>
+                        <div class="filter-grid">
+                            <div class="filter-item active" data-filter="none">
+                                <div style="background: #1a1a2e; height: 100%; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                            </div>
+                            <div class="filter-item" data-filter="vintage">
+                                <div style="background: linear-gradient(45deg, #8B4513, #A0522D); height: 100%;"></div>
+                            </div>
+                            <div class="filter-item" data-filter="grayscale">
+                                <div style="background: linear-gradient(45deg, #333, #666); height: 100%;"></div>
+                            </div>
+                            <div class="filter-item" data-filter="sepia">
+                                <div style="background: linear-gradient(45deg, #704214, #8B4513); height: 100%;"></div>
+                            </div>
+                            <div class="filter-item" data-filter="invert">
+                                <div style="background: linear-gradient(45deg, #000, #fff); height: 100%;"></div>
+                            </div>
+                            <div class="filter-item" data-filter="blur">
+                                <div style="background: linear-gradient(45deg, #aaa, #ddd); height: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Drawing Tools Panel -->
+                    <div class="panel-section">
+                        <div class="panel-title">
+                            <i class="fas fa-paint-brush"></i> Drawing Tools
+                        </div>
+                        <div class="color-picker-container">
+                            <div class="color-preview" id="color-preview" style="background: #ff6b6b;"></div>
+                            <input type="color" id="draw-color" value="#ff6b6b" style="flex: 1;">
+                        </div>
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>Brush Size</span>
+                                <span id="brush-size-value">5</span>
+                            </div>
+                            <input type="range" id="draw-width" min="1" max="50" value="5">
+                        </div>
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>Opacity</span>
+                                <span id="opacity-value">100%</span>
+                            </div>
+                            <input type="range" id="draw-opacity" min="0" max="1" step="0.01" value="1">
+                        </div>
+                        <button class="btn btn-accent" id="drawing-mode-toggle" style="width: 100%; margin-top: 10px;">
+                            <i class="fas fa-pencil-alt"></i> Start Drawing
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
-    </main>
 
-    <!-- Footer -->
-    <div id="main-footer"></div>
-    <script src="components.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+        <!-- Footer -->
+        <footer class="footer">
+            <p>PixelCraft Pro - Advanced Free Online Image Editor | No Premium Required | Created with ❤️</p>
+        </footer>
+    </div>
+
     <script>
+        // Initialize Fabric.js canvas
+        const canvas = new fabric.Canvas('canvas', {
+            width: 800,
+            height: 600,
+            backgroundColor: '#f0f0f5'
+        });
+
+        // Add sample text to canvas
+        const sampleText = new fabric.IText('Edit Me!', {
+            left: 100,
+            top: 100,
+            fontFamily: 'Arial',
+            fontSize: 60,
+            fill: '#ff6b6b',
+            shadow: 'rgba(0,0,0,0.3) 5px 5px 10px',
+            fontWeight: 'bold'
+        });
+        canvas.add(sampleText);
+
+        // Add sample shape
+        const circle = new fabric.Circle({
+            left: 300,
+            top: 300,
+            radius: 80,
+            fill: '#6e44ff',
+            stroke: '#ffffff',
+            strokeWidth: 4,
+            shadow: 'rgba(0,0,0,0.3) 5px 5px 15px'
+        });
+        canvas.add(circle);
+
+        // UI Elements
         const imageUpload = document.getElementById('image-upload');
-        const imageToEdit = document.getElementById('image-to-edit');
-        const cropBtn = document.getElementById('crop-btn');
-        const zoomInBtn = document.getElementById('zoom-in-btn');
-        const zoomOutBtn = document.getElementById('zoom-out-btn');
-        const resizeBtn = document.getElementById('resize-btn');
-        const resizeWidth = document.getElementById('resize-width');
-        const resizeHeight = document.getElementById('resize-height');
-        const grayscaleBtn = document.getElementById('grayscale-btn');
-        const sepiaBtn = document.getElementById('sepia-btn');
-        const invertBtn = document.getElementById('invert-btn');
-        const resetFiltersBtn = document.getElementById('reset-filters-btn');
-        const rotateLeftBtn = document.getElementById('rotate-left-btn');
-        const rotateRightBtn = document.getElementById('rotate-right-btn');
+        const uploadBtn = document.getElementById('upload-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const drawingModeToggle = document.getElementById('drawing-mode-toggle');
+        const drawColor = document.getElementById('draw-color');
+        const colorPreview = document.getElementById('color-preview');
+        const drawWidth = document.getElementById('draw-width');
+        const brushSizeValue = document.getElementById('brush-size-value');
+        const drawOpacity = document.getElementById('draw-opacity');
+        const opacityValue = document.getElementById('opacity-value');
+        const brightness = document.getElementById('brightness');
+        const brightnessValue = document.getElementById('brightness-value');
+        const contrast = document.getElementById('contrast');
+        const contrastValue = document.getElementById('contrast-value');
+        const saturation = document.getElementById('saturation');
+        const saturationValue = document.getElementById('saturation-value');
+        const exposure = document.getElementById('exposure');
+        const exposureValue = document.getElementById('exposure-value');
+        const rotateLeft = document.getElementById('rotate-left');
+        const rotateRight = document.getElementById('rotate-right');
+        const zoomIn = document.getElementById('zoom-in');
+        const zoomOut = document.getElementById('zoom-out');
+        const filterItems = document.querySelectorAll('.filter-item');
+        const toolBtns = document.querySelectorAll('.tool-btn');
 
-        let cropper;
-        let currentFilters = [];
+        // Set initial brush properties
+        canvas.freeDrawingBrush.color = drawColor.value;
+        canvas.freeDrawingBrush.width = parseInt(drawWidth.value, 10) || 5;
+        colorPreview.style.background = drawColor.value;
 
-        imageUpload.addEventListener('change', (e) => {
-            const files = e.target.files;
-            if (files && files.length > 0) {
-                const reader = new FileReader();
-                reader.onload = () => {
-                    imageToEdit.src = reader.result;
-                    if (cropper) {
-                        cropper.destroy();
-                    }
-                    cropper = new Cropper(imageToEdit, {
-                        aspectRatio: NaN, // Free crop
-                        viewMode: 1,
+        // Event Listeners
+        uploadBtn.addEventListener('click', () => imageUpload.click());
+        drawingModeToggle.addEventListener('click', toggleDrawingMode);
+        drawColor.addEventListener('change', updateBrushColor);
+        drawWidth.addEventListener('input', updateBrushSize);
+        drawOpacity.addEventListener('input', updateBrushOpacity);
+        brightness.addEventListener('input', updateBrightness);
+        contrast.addEventListener('input', updateContrast);
+        saturation.addEventListener('input', updateSaturation);
+        exposure.addEventListener('input', updateExposure);
+        rotateLeft.addEventListener('click', rotateObjectLeft);
+        rotateRight.addEventListener('click', rotateObjectRight);
+        zoomIn.addEventListener('click', zoomCanvasIn);
+        zoomOut.addEventListener('click', zoomCanvasOut);
+        resetBtn.addEventListener('click', resetCanvas);
+        downloadBtn.addEventListener('click', downloadImage);
+        imageUpload.addEventListener('change', handleImageUpload);
+        
+        // Add event listeners to filter items
+        filterItems.forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelector('.filter-item.active').classList.remove('active');
+                item.classList.add('active');
+                applyFilter(item.dataset.filter);
+            });
+        });
+        
+        // Add event listeners to tool buttons
+        toolBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelector('.tool-btn.active').classList.remove('active');
+                btn.classList.add('active');
+                // In a full implementation, this would switch the properties panel
+            });
+        });
+
+        // Functions
+        function toggleDrawingMode() {
+            canvas.isDrawingMode = !canvas.isDrawingMode;
+            drawingModeToggle.innerHTML = canvas.isDrawingMode ? 
+                '<i class="fas fa-stop"></i> Stop Drawing' : 
+                '<i class="fas fa-pencil-alt"></i> Start Drawing';
+        }
+
+        function updateBrushColor() {
+            canvas.freeDrawingBrush.color = drawColor.value;
+            colorPreview.style.background = drawColor.value;
+        }
+
+        function updateBrushSize() {
+            canvas.freeDrawingBrush.width = parseInt(drawWidth.value, 10) || 1;
+            brushSizeValue.textContent = drawWidth.value;
+        }
+
+        function updateBrushOpacity() {
+            canvas.freeDrawingBrush.opacity = parseFloat(drawOpacity.value);
+            opacityValue.textContent = `${Math.round(parseFloat(drawOpacity.value) * 100)}%`;
+        }
+
+        function updateBrightness() {
+            brightnessValue.textContent = parseFloat(brightness.value).toFixed(2);
+            // Actual filter implementation would go here
+        }
+
+        function updateContrast() {
+            contrastValue.textContent = parseFloat(contrast.value).toFixed(2);
+        }
+
+        function updateSaturation() {
+            saturationValue.textContent = parseFloat(saturation.value).toFixed(2);
+        }
+
+        function updateExposure() {
+            exposureValue.textContent = parseFloat(exposure.value).toFixed(2);
+        }
+
+        function rotateObjectLeft() {
+            const obj = canvas.getActiveObject();
+            if (obj) {
+                obj.rotate(obj.angle - 15);
+                canvas.renderAll();
+            }
+        }
+
+        function rotateObjectRight() {
+            const obj = canvas.getActiveObject();
+            if (obj) {
+                obj.rotate(obj.angle + 15);
+                canvas.renderAll();
+            }
+        }
+
+        function zoomCanvasIn() {
+            const zoom = canvas.getZoom();
+            canvas.setZoom(zoom * 1.1);
+            canvas.renderAll();
+        }
+
+        function zoomCanvasOut() {
+            const zoom = canvas.getZoom();
+            canvas.setZoom(zoom * 0.9);
+            canvas.renderAll();
+        }
+
+        function resetCanvas() {
+            if (confirm('Are you sure you want to reset the canvas? All changes will be lost.')) {
+                canvas.clear();
+                canvas.setWidth(800);
+                canvas.setHeight(600);
+                canvas.backgroundColor = '#f0f0f5';
+                canvas.renderAll();
+            }
+        }
+
+        function downloadImage() {
+            const dataURL = canvas.toDataURL({
+                format: 'png',
+                quality: 1
+            });
+            const link = document.createElement('a');
+            link.href = dataURL;
+            link.download = 'pixelcraft-edit.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (f) => {
+                fabric.Image.fromURL(f.target.result, (img) => {
+                    // Clear canvas and add new image
+                    canvas.clear();
+                    canvas.setWidth(img.width > 1200 ? 1200 : img.width);
+                    canvas.setHeight(img.height > 800 ? 800 : img.height);
+                    img.set({
+                        left: 0,
+                        top: 0,
+                        selectable: true
                     });
-                };
-                reader.readAsDataURL(files[0]);
-            }
-        });
-
-        cropBtn.addEventListener('click', () => {
-            if (!cropper) return;
-            const canvas = cropper.getCroppedCanvas();
-            canvas.toBlob((blob) => {
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = 'cropped-image.png';
-                link.click();
-            });
-        });
-
-        zoomInBtn.addEventListener('click', () => cropper && cropper.zoom(0.1));
-        zoomOutBtn.addEventListener('click', () => cropper && cropper.zoom(-0.1));
-
-        resizeBtn.addEventListener('click', () => {
-            if (!cropper) return;
-            const width = parseInt(resizeWidth.value);
-            const height = parseInt(resizeHeight.value);
-            if(isNaN(width) || isNaN(height)) return;
-
-            const canvas = cropper.getCroppedCanvas({ width, height });
-            applyFiltersAndDownload(canvas, `resized-image-${width}x${height}.png`);
-        });
-
-        // Filter and Rotate Logic
-        grayscaleBtn.addEventListener('click', () => addFilter('grayscale(100%)'));
-        sepiaBtn.addEventListener('click', () => addFilter('sepia(100%)'));
-        invertBtn.addEventListener('click', () => addFilter('invert(100%)'));
-        resetFiltersBtn.addEventListener('click', () => {
-            currentFilters = [];
-            applyFiltersToImage();
-        });
-
-        rotateLeftBtn.addEventListener('click', () => cropper && cropper.rotate(-90));
-        rotateRightBtn.addEventListener('click', () => cropper && cropper.rotate(90));
-
-        function addFilter(filter) {
-            if (!currentFilters.includes(filter)) {
-                currentFilters.push(filter);
-            }
-            applyFiltersToImage();
+                    canvas.add(img);
+                    canvas.setActiveObject(img);
+                    canvas.renderAll();
+                });
+            };
+            reader.readAsDataURL(file);
         }
 
-        function applyFiltersToImage() {
-            if (cropper) {
-                const container = cropper.getContainerData();
-                const image = imageToEdit;
-                image.style.filter = currentFilters.join(' ');
+        function applyFilter(filterName) {
+            // This is a placeholder - in a real implementation, you would apply the filter
+            console.log(`Applying filter: ${filterName}`);
+            // For demonstration, change the background color
+            switch(filterName) {
+                case 'vintage':
+                    canvas.backgroundColor = '#d2b48c';
+                    break;
+                case 'grayscale':
+                    canvas.backgroundColor = '#808080';
+                    break;
+                case 'sepia':
+                    canvas.backgroundColor = '#704214';
+                    break;
+                case 'invert':
+                    canvas.backgroundColor = '#000000';
+                    break;
+                case 'blur':
+                    canvas.backgroundColor = '#a0a0a0';
+                    break;
+                default:
+                    canvas.backgroundColor = '#f0f0f5';
             }
+            canvas.renderAll();
         }
 
-        function applyFiltersAndDownload(canvas, filename) {
-            const ctx = canvas.getContext('2d');
-            ctx.filter = currentFilters.join(' ');
-            ctx.drawImage(canvas, 0, 0);
-
-            canvas.toBlob((blob) => {
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = filename;
-                link.click();
-            });
-        }
+        // Initialize values
+        updateBrushSize();
+        updateBrushOpacity();
     </script>
 </body>
 </html>
