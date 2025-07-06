@@ -1,0 +1,49 @@
+<nav class="sticky top-0 bg-black/80 backdrop-blur-sm z-50">
+    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-8">
+            <a href="index.html" class="text-2xl font-bold flex items-center logo-3d">
+                <i class="fas fa-tools mr-2"></i> Mr.FreeTools
+            </a>
+            <div id="nav-links" class="hidden md:flex items-center space-x-6">
+                <a href="index.html" class="hover:text-blue-400">Home</a>
+                <div class="relative group">
+                    <button class="hover:text-blue-400 flex items-center">
+                        Tools
+                        <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                        </svg>
+                    </button>
+                    <ul class="absolute hidden group-hover:block bg-black/80 backdrop-blur-sm mt-2 py-1 rounded-md shadow-lg w-48 z-10">
+                        <li><a href="/word-counter.html" class="block px-4 py-2 hover:text-blue-400">Word Counter</a></li>
+                        <li><a href="/qr-generator.html" class="block px-4 py-2 hover:text-blue-400">QR Code Generator</a></li>
+                        <li><a href="/pdf-editor.html" class="block px-4 py-2 hover:text-blue-400">PDF Editor</a></li>
+                    </ul>
+                </div>
+                <a href="about.html" class="hover:text-blue-400">About</a>
+                <a href="contact.html" class="hover:text-blue-400">Contact</a>
+                <a href="blog.html" class="hover:text-blue-400">Blog</a>
+                <a href="legal.html" class="hover:text-blue-400">Legal</a>
+            </div>
+        </div>
+        <div class="theme-switcher">
+            <button id="theme-toggle">Light/Dark</button>
+        </div>
+    </div>
+</nav>
+<script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+
+    themeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'dark');
+        } else {
+            localStorage.setItem('theme', 'light');
+        }
+    });
+
+    if (localStorage.getItem('theme') === 'dark') {
+        body.classList.add('dark-mode');
+    }
+</script>

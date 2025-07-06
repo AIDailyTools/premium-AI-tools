@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Generator - Trae Tools</title>
+    <meta name="description" content="Create and download professional PDF invoices for free. Our invoice generator is easy to use and perfect for freelancers and small businesses.">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-4 logo-3d">Invoice Generator</h1>
+        <p class="max-w-3xl mx-auto text-center text-gray-300 mb-12">Effortlessly create professional invoices with our redesigned generator. Featuring a real-time preview, you can now add your company logo, specify currency, and include discounts. Download your customized, print-ready PDF invoice in seconds.</p>
+        <div class="bg-white/10 p-8 rounded-xl flex flex-col md:flex-row gap-8">
+            <div id="invoice-form" class="w-full md:w-1/2 text-gray-200 space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">Invoice Details</h2>
+                    <div>
+                        <button id="generate-pdf-btn" class="button-3d">Download PDF</button>
+                        <button id="help-btn" class="button-3d bg-gray-600 hover:bg-gray-700 ml-2">Help</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" id="invoice-number" placeholder="Invoice #" class="w-full p-3 rounded bg-white/10">
+                    <input type="text" id="currency" value="USD" class="w-full p-3 rounded bg-white/10">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="date" id="invoice-date" class="w-full p-3 rounded bg-white/10" title="Invoice Date">
+                    <input type="date" id="due-date" class="w-full p-3 rounded bg-white/10" title="Due Date">
+                </div>
+                <hr class="border-gray-600">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">From</h3>
+                        <input type="text" id="from-name" placeholder="Your Name / Company" class="w-full p-3 rounded bg-white/10 mb-2">
+                        <textarea id="from-address" placeholder="Your Address" rows="3" class="w-full p-3 rounded bg-white/10"></textarea>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">To</h3>
+                        <input type="text" id="to-name" placeholder="Client's Name / Company" class="w-full p-3 rounded bg-white/10 mb-2">
+                        <textarea id="to-address" placeholder="Client's Address" rows="3" class="w-full p-3 rounded bg-white/10"></textarea>
+                    </div>
+                </div>
+                <hr class="border-gray-600">
+                <div>
+                    <h3 class="text-xl font-bold mb-2">Items</h3>
+                    <div id="line-items" class="space-y-2">
+                        <div class="line-item grid grid-cols-12 gap-2">
+                            <input type="text" class="item-description col-span-6 p-2 rounded bg-white/10" placeholder="Item Description">
+                            <input type="number" class="item-quantity col-span-2 p-2 rounded bg-white/10" placeholder="Qty" value="1">
+                            <input type="number" class="item-price col-span-2 p-2 rounded bg-white/10" placeholder="Price">
+                            <div class="item-total col-span-2 p-2">0.00</div>
+                        </div>
+                    </div>
+                    <button id="add-item-btn" class="button-3d mt-2">+ Add Item</button>
+                </div>
+                <hr class="border-gray-600">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" id="tax-rate" placeholder="Tax Rate (%)" class="w-full p-3 rounded bg-white/10">
+                    <input type="number" id="discount" placeholder="Discount (%)" class="w-full p-3 rounded bg-white/10">
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2">Notes</h3>
+                    <textarea id="notes" placeholder="Any additional notes..." rows="3" class="w-full p-3 rounded bg-white/10"></textarea>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2">Logo</h3>
+                    <input type="file" id="logo-upload" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+            </div>
+            <div id="invoice-preview-container" class="w-full md:w-1/2 bg-white text-black p-8 rounded-lg overflow-auto">
+                <!-- Live preview will be rendered here -->
+            </div>
+            <!-- Ad Space -->
+            <div class="mt-8 bg-black/20 p-4 text-center">
+                AD SPACE - In-Tool Ad
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+
+    <!-- Modal -->
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 class="text-2xl font-bold mb-4">Invoice Generator Help</h2>
+            <p class="mb-2">This tool helps you create professional invoices quickly and easily.</p>
+            <ul class="list-disc list-inside">
+                <li><b>Fill in the Details:</b> Enter all the required information in the form on the left, including invoice number, dates, and sender/recipient details.</li>
+                <li><b>Add Items:</b> Click the "+ Add Item" button to add line items to your invoice. You can add as many as you need.</li>
+                <li><b>Tax & Discount:</b> Apply overall tax and discount rates to the subtotal.</li>
+                <li><b>Upload Logo:</b> Add your company logo for a professional touch.</li>
+                <li><b>Live Preview:</b> See your invoice update in real-time on the right.</li>
+                <li><b>Download PDF:</b> Once you're happy with the invoice, click "Download PDF" to save it.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('invoice-form');
+            const previewContainer = document.getElementById('invoice-preview-container');
+            const addItemBtn = document.getElementById('add-item-btn');
+            const lineItemsContainer = document.getElementById('line-items');
+            const generatePdfBtn = document.getElementById('generate-pdf-btn');
+            const helpBtn = document.getElementById('help-btn');
+            const modal = document.getElementById('help-modal');
+            const closeBtn = document.querySelector('.close-button');
+            let logoDataUrl = null;
+
+            const updatePreview = () => {
+                const fromName = document.getElementById('from-name').value;
+                const fromAddress = document.getElementById('from-address').value;
+                const toName = document.getElementById('to-name').value;
+                const toAddress = document.getElementById('to-address').value;
+                const invoiceNumber = document.getElementById('invoice-number').value;
+                const invoiceDate = document.getElementById('invoice-date').value;
+                const dueDate = document.getElementById('due-date').value;
+                const notes = document.getElementById('notes').value;
+                const currency = document.getElementById('currency').value;
+                const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
+                const discount = parseFloat(document.getElementById('discount').value) || 0;
+
+                let itemsHtml = '';
+                let subtotal = 0;
+                const items = document.querySelectorAll('.line-item');
+                items.forEach(item => {
+                    const description = item.querySelector('.item-description').value || '...';
+                    const quantity = parseFloat(item.querySelector('.item-quantity').value) || 0;
+                    const price = parseFloat(item.querySelector('.item-price').value) || 0;
+                    const total = quantity * price;
+                    subtotal += total;
+                    item.querySelector('.item-total').textContent = total.toFixed(2);
+                    itemsHtml += `
+                        <tr class="border-b">
+                            <td class="py-2">${description}</td>
+                            <td class="text-center">${quantity}</td>
+                            <td class="text-right">${price.toFixed(2)}</td>
+                            <td class="text-right">${total.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+
+                const taxAmount = subtotal * (taxRate / 100);
+                const discountAmount = subtotal * (discount / 100);
+                const total = subtotal + taxAmount - discountAmount;
+
+                previewContainer.innerHTML = `
+                    <div id="invoice-content" class="p-4">
+                        <div class="flex justify-between items-start mb-8">
+                            <div>
+                                ${logoDataUrl ? `<img src="${logoDataUrl}" alt="logo" class="w-32 mb-4">` : ''}
+                                <h1 class="text-3xl font-bold">INVOICE</h1>
+                                <p># ${invoiceNumber}</p>
+                            </div>
+                            <div class="text-right">
+                                <p><strong>Date:</strong> ${invoiceDate}</p>
+                                <p><strong>Due Date:</strong> ${dueDate}</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-8 mb-8">
+                            <div>
+                                <h3 class="font-bold mb-2">From:</h3>
+                                <p>${fromName.replace(/\n/g, '<br>')}</p>
+                                <p>${fromAddress.replace(/\n/g, '<br>')}</p>
+                            </div>
+                            <div class="text-right">
+                                <h3 class="font-bold mb-2">To:</h3>
+                                <p>${toName.replace(/\n/g, '<br>')}</p>
+                                <p>${toAddress.replace(/\n/g, '<br>')}</p>
+                            </div>
+                        </div>
+                        <table class="w-full mb-8">
+                            <thead>
+                                <tr class="bg-gray-200">
+                                    <th class="text-left p-2">Description</th>
+                                    <th class="p-2">Quantity</th>
+                                    <th class="text-right p-2">Price</th>
+                                    <th class="text-right p-2">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>${itemsHtml}</tbody>
+                        </table>
+                        <div class="flex justify-end mb-8">
+                            <div class="w-64">
+                                <div class="flex justify-between"><p>Subtotal:</p><p>${subtotal.toFixed(2)} ${currency}</p></div>
+                                ${discount > 0 ? `<div class="flex justify-between"><p>Discount (${discount}%):</p><p>-${discountAmount.toFixed(2)} ${currency}</p></div>` : ''}
+                                ${taxRate > 0 ? `<div class="flex justify-between"><p>Tax (${taxRate}%):</p><p>${taxAmount.toFixed(2)} ${currency}</p></div>` : ''}
+                                <hr class="my-2">
+                                <div class="flex justify-between font-bold text-lg"><p>Total:</p><p>${total.toFixed(2)} ${currency}</p></div>
+                            </div>
+                        </div>
+                        ${notes ? `<div class="mb-8"><strong>Notes:</strong><p>${notes.replace(/\n/g, '<br>')}</p></div>` : ''}
+                        <div class="text-center text-gray-500 text-sm">
+                            <p>Thank you for your business!</p>
+                        </div>
+                    </div>
+                `;
+            };
+
+            form.addEventListener('input', updatePreview);
+
+            document.getElementById('logo-upload').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        logoDataUrl = event.target.result;
+                        updatePreview();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            addItemBtn.addEventListener('click', () => {
+                const newItem = document.createElement('div');
+                newItem.className = 'line-item grid grid-cols-12 gap-2 mt-2';
+                newItem.innerHTML = `
+                    <input type="text" class="item-description col-span-6 p-2 rounded bg-white/10" placeholder="Item Description">
+                    <input type="number" class="item-quantity col-span-2 p-2 rounded bg-white/10" placeholder="Qty" value="1">
+                    <input type="number" class="item-price col-span-2 p-2 rounded bg-white/10" placeholder="Price">
+                    <div class="item-total col-span-1 p-2">0.00</div>
+                    <button class="remove-item-btn col-span-1 p-2 rounded bg-red-600 hover:bg-red-700">X</button>
+                `;
+                lineItemsContainer.appendChild(newItem);
+                updatePreview();
+            });
+
+            lineItemsContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-item-btn')) {
+                    e.target.closest('.line-item').remove();
+                    updatePreview();
+                }
+            });
+
+            generatePdfBtn.addEventListener('click', () => {
+                const { jsPDF } = window.jspdf;
+                const invoiceContent = document.getElementById('invoice-content');
+                if (!invoiceContent) {
+                    alert('Please fill out the invoice details first.');
+                    return;
+                }
+                html2canvas(invoiceContent, { scale: 2 }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = pdf.internal.pageSize.getHeight();
+                    const canvasWidth = canvas.width;
+                    const canvasHeight = canvas.height;
+                    const ratio = canvasWidth / canvasHeight;
+                    const width = pdfWidth;
+                    const height = width / ratio;
+                    pdf.addImage(imgData, 'PNG', 0, 0, width, height > pdfHeight ? pdfHeight : height);
+                    pdf.save(`invoice-${document.getElementById('invoice-number').value || 'generated'}.pdf`);
+                });
+            });
+
+            // Initial preview
+            updatePreview();
+
+            helpBtn.addEventListener('click', () => {
+                modal.style.display = 'block';
+            });
+    
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+    
+            window.addEventListener('click', (event) => {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
