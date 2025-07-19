@@ -21,15 +21,13 @@
         <div class="flex justify-end mb-4">
             <button id="show-help-btn" class="button-3d">Show Help</button>
         </div>
-        <div class="bg-white/10 p-8 rounded-xl max-w-lg mx-auto shadow-lg">
-            <div class="mb-4">
-                <label for="category" class="block mb-2">Category</label>
-                <select id="category" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white">
-                    <option>Length</option>
-                    <option>Temperature</option>
-                    <option>Data</option>
-                </select>
-            </div>
+        <div class="flex gap-8">
+            <aside class="w-1/4">
+                <div id="converter-menu" class="bg-white/10 rounded-xl p-4">
+                    <!-- Accordion menu will be generated here -->
+                </div>
+            </aside>
+            <div class="w-3/4 bg-white/10 p-8 rounded-xl shadow-lg">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                 <div>
                     <label for="inputValue" class="block mb-2">Value</label>
@@ -73,28 +71,236 @@
     <div id="main-footer"></div>
     <script src="components.js"></script>
     <script>
-        const categorySelect = document.getElementById('category');
+        const converters = {
+    "Common Converters": {
+        "Length": {
+            base: "Meter",
+            units: {
+                "Meter": 1,
+                "Kilometer": 1000,
+                "Centimeter": 0.01,
+                "Millimeter": 0.001,
+                "Micrometer": 1e-6,
+                "Nanometer": 1e-9,
+                "Mile": 1609.34,
+                "Yard": 0.9144,
+                "Foot": 0.3048,
+                "Inch": 0.0254,
+                "Light Year": 9.461e15
+            }
+        },
+        "Temperature": {
+            units: ["Celsius", "Fahrenheit", "Kelvin"],
+            convert: function(value, from, to) {
+                let tempInCelsius;
+                if (from === 'Celsius') tempInCelsius = value;
+                if (from === 'Fahrenheit') tempInCelsius = (value - 32) * 5/9;
+                if (from === 'Kelvin') tempInCelsius = value - 273.15;
+
+                if (to === 'Celsius') return tempInCelsius;
+                if (to === 'Fahrenheit') return (tempInCelsius * 9/5) + 32;
+                if (to === 'Kelvin') return tempInCelsius + 273.15;
+            }
+        },
+        "Area": {
+            base: "Square Meter",
+            units: {
+                "Square Meter": 1,
+                "Square Kilometer": 1e6,
+                "Square Centimeter": 1e-4,
+                "Square Millimeter": 1e-6,
+                "Square Mile": 2.59e6,
+                "Square Yard": 0.836127,
+                "Square Foot": 0.092903,
+                "Square Inch": 0.00064516,
+                "Hectare": 10000,
+                "Acre": 4046.86
+            }
+        },
+        "Volume": {
+            base: "Liter",
+            units: {
+                "Liter": 1,
+                "Cubic Meter": 1000,
+                "Cubic Centimeter": 0.001,
+                "Milliliter": 0.001,
+                "Gallon (US)": 3.78541,
+                "Quart (US)": 0.946353,
+                "Pint (US)": 0.473176,
+                "Cup (US)": 0.24,
+                "Fluid Ounce (US)": 0.0295735,
+                "Tablespoon (US)": 0.0147868,
+                "Teaspoon (US)": 0.00492892
+            }
+        },
+        "Weight": {
+            base: "Kilogram",
+            units: {
+                "Kilogram": 1,
+                "Gram": 0.001,
+                "Milligram": 1e-6,
+                "Metric Ton": 1000,
+                "Pound": 0.453592,
+                "Ounce": 0.0283495
+            }
+        },
+        "Time": {
+            base: "Second",
+            units: {
+                "Second": 1,
+                "Millisecond": 0.001,
+                "Minute": 60,
+                "Hour": 3600,
+                "Day": 86400,
+                "Week": 604800,
+                "Month": 2.628e6,
+                "Year": 3.154e7
+            }
+        }
+    },
+    "Engineering Converters": {
+        "Velocity": {
+            base: "Meter/Second",
+            units: {
+                "Meter/Second": 1,
+                "Kilometer/Hour": 0.277778,
+                "Mile/Hour": 0.44704,
+                "Foot/Second": 0.3048,
+                "Knot": 0.514444
+            }
+        },
+        "Pressure": {
+            base: "Pascal",
+            units: {
+                "Pascal": 1,
+                "Kilopascal": 1000,
+                "Bar": 100000,
+                "PSI": 6894.76,
+                "Atmosphere": 101325
+            }
+        },
+        "Energy": {
+            base: "Joule",
+            units: {
+                "Joule": 1,
+                "Kilojoule": 1000,
+                "Calorie": 4.184,
+                "Kilocalorie": 4184,
+                "Watt Hour": 3600,
+                "Kilowatt Hour": 3.6e6,
+                "Electronvolt": 1.6022e-19,
+                "BTU": 1055.06
+            }
+        },
+        "Power": {
+            base: "Watt",
+            units: {
+                "Watt": 1,
+                "Kilowatt": 1000,
+                "Megawatt": 1e6,
+                "Horsepower": 745.7
+            }
+        },
+        "Force": {
+            base: "Newton",
+            units: {
+                "Newton": 1,
+                "Kilonewton": 1000,
+                "Dyne": 1e-5,
+                "Pound-force": 4.44822
+            }
+        }
+    },
+    "Fluids Converters": {
+        "Flow": {
+            base: "Cubic Meter/Second",
+            units: {
+                "Cubic Meter/Second": 1,
+                "Liter/Second": 0.001,
+                "Gallon/Minute (US)": 6.309e-5
+            }
+        }
+    }
+};
+
         const fromUnitSelect = document.getElementById('fromUnit');
         const toUnitSelect = document.getElementById('toUnit');
+        const menuContainer = document.getElementById('converter-menu');
+        let currentConverter;
 
-        const units = {
-            Length: ['Meters', 'Kilometers', 'Miles', 'Feet'],
-            Temperature: ['Celsius', 'Fahrenheit', 'Kelvin'],
-            Data: ['Bytes', 'Kilobytes', 'Megabytes', 'Gigabytes']
-        };
+        function createAccordionMenu() {
+            let html = '';
+            for (const category in converters) {
+                html += `<div>`;
+                html += `<button class="w-full text-left p-3 bg-white/20 rounded-t-lg mt-2 font-bold">${category}</button>`;
+                html += `<div class="pl-4 pb-2 bg-white/10 rounded-b-lg">`;
+                for (const subCategory in converters[category]) {
+                    html += `<a href="#" class="block p-2 hover:bg-white/20 rounded converter-link" data-category="${category}" data-subcategory="${subCategory}">${subCategory}</a>`;
+                }
+                html += `</div></div>`;
+            }
+            menuContainer.innerHTML = html;
+        }
 
         function populateUnits() {
-            const selectedCategory = categorySelect.value;
+            if (!currentConverter) return;
+
+            const units = currentConverter.units;
             fromUnitSelect.innerHTML = '';
             toUnitSelect.innerHTML = '';
-            units[selectedCategory].forEach(unit => {
+            const unitNames = Array.isArray(units) ? units : Object.keys(units);
+
+            unitNames.forEach(unit => {
                 fromUnitSelect.innerHTML += `<option>${unit}</option>`;
                 toUnitSelect.innerHTML += `<option>${unit}</option>`;
             });
         }
 
-        categorySelect.addEventListener('change', populateUnits);
+        menuContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('converter-link')) {
+                e.preventDefault();
+                const category = e.target.dataset.category;
+                const subCategory = e.target.dataset.subcategory;
+                currentConverter = converters[category][subCategory];
+                document.querySelector('h1.logo-3d').innerText = subCategory;
                 populateUnits();
+                document.getElementById('result').innerText = '';
+                document.getElementById('inputValue').value = '';
+            }
+        });
+
+        document.getElementById('convertBtn').addEventListener('click', () => {
+            const inputValue = parseFloat(document.getElementById('inputValue').value);
+            const fromUnit = fromUnitSelect.value;
+            const toUnit = toUnitSelect.value;
+            const resultDiv = document.getElementById('result');
+
+            if (isNaN(inputValue)) {
+                resultDiv.innerText = 'Please enter a valid number.';
+                return;
+            }
+
+            if (!currentConverter) {
+                resultDiv.innerText = 'Please select a converter type from the menu.';
+                return;
+            }
+
+            let result;
+            if (currentConverter.convert) {
+                result = currentConverter.convert(inputValue, fromUnit, toUnit);
+            } else {
+                const baseValue = inputValue * currentConverter.units[fromUnit];
+                result = baseValue / currentConverter.units[toUnit];
+            }
+
+            resultDiv.innerText = `${inputValue} ${fromUnit} = ${result.toFixed(6)} ${toUnit}`;
+        });
+
+        // Initialize
+        createAccordionMenu();
+        // Set a default converter
+        currentConverter = converters["Common Converters"]["Length"];
+        populateUnits();
 
         // Modal Logic
         const helpModal = document.getElementById('help-modal');
@@ -115,51 +321,6 @@
             }
         });
 
-        document.getElementById('convertBtn').addEventListener('click', () => {
-            const inputValue = document.getElementById('inputValue').value;
-            const fromUnit = document.getElementById('fromUnit').value;
-            const toUnit = document.getElementById('toUnit').value;
-            const resultDiv = document.getElementById('result');
-
-            if (inputValue === '') {
-                resultDiv.innerText = 'Please enter a value.';
-                return;
-            }
-
-            let result;
-            const category = categorySelect.value;
-
-            if (category === 'Length') {
-                const conversions = {
-                    'Meters': 1,
-                    'Kilometers': 1000,
-                    'Miles': 1609.34,
-                    'Feet': 0.3048
-                };
-                const valueInMeters = inputValue * conversions[fromUnit];
-                result = valueInMeters / conversions[toUnit];
-            } else if (category === 'Temperature') {
-                let tempInCelsius;
-                if (fromUnit === 'Celsius') tempInCelsius = +inputValue;
-                if (fromUnit === 'Fahrenheit') tempInCelsius = (inputValue - 32) * 5/9;
-                if (fromUnit === 'Kelvin') tempInCelsius = inputValue - 273.15;
-
-                if (toUnit === 'Celsius') result = tempInCelsius;
-                if (toUnit === 'Fahrenheit') result = (tempInCelsius * 9/5) + 32;
-                if (toUnit === 'Kelvin') result = tempInCelsius + 273.15;
-            } else if (category === 'Data') {
-                const conversions = {
-                    'Bytes': 1,
-                    'Kilobytes': 1024,
-                    'Megabytes': 1024 ** 2,
-                    'Gigabytes': 1024 ** 3
-                };
-                const valueInBytes = inputValue * conversions[fromUnit];
-                result = valueInBytes / conversions[toUnit];
-            }
-
-            resultDiv.innerText = `${inputValue} ${fromUnit} = ${result.toFixed(4)} ${toUnit}`;
-        });
     </script>
 </body>
 </html>
