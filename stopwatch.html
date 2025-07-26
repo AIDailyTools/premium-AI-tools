@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch - Trae Tools</title>
+    <meta name="description" content="A simple and accurate online stopwatch with lap functionality. Perfect for timing activities, workouts, and more.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- AdSense Placeholder -->
+    <div class="adsense-placeholder-top">
+        <!-- Google AdSense code goes here -->
+    </div>
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="flex justify-end mb-4">
+            <button id="show-help-btn" class="button-3d">Show Help</button>
+        </div>
+        <h1 class="text-5xl font-bold text-center mb-2 text-white">Online Stopwatch</h1>
+        <p class="text-center text-gray-400 mb-8">A simple, fast, and accurate stopwatch and countdown timer. Use the 'Start' button to begin timing, 'Stop' to pause, 'Reset' to clear, and 'Lap' to record split times. This tool is perfect for tracking time for workouts, cooking, or any activity where precision is key.</p>
+        <div class="bg-white/10 p-8 rounded-xl shadow-lg">
+            <div class="max-w-2xl mx-auto text-center">
+                <div class="text-8xl font-mono mb-8 tracking-widest" id="display">00:00:00<span class="text-5xl">.000</span></div>
+                <div class="flex justify-center gap-4 mb-8">
+                                        <button id="start-btn" class="button-3d">Start</button>
+                    <button id="stop-btn" class="button-3d">Stop</button>
+                    <button id="reset-btn" class="button-3d">Reset</button>
+                    <button id="lap-btn" class="button-3d">Lap</button>
+                </div>
+                <ul id="laps" class="text-left mt-8 text-2xl space-y-2"></ul>
+             </div>
+        </div>
+
+        <div class="mt-16">
+            <h2 class="text-4xl font-bold text-center mb-8 text-white">Countdown Timer</h2>
+            <div class="bg-gray-800 p-8 rounded-xl shadow-lg">
+                <div class="max-w-2xl mx-auto text-center">
+                    <div class="text-8xl font-mono mb-8 tracking-widest" id="countdown-display">00:00:00</div>
+                    <div class="flex justify-center gap-4 mb-8" id="countdown-inputs">
+                        <input type="number" id="hours-input" class="w-24 p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white text-center text-2xl" placeholder="HH" min="0">
+                        <input type="number" id="minutes-input" class="w-24 p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white text-center text-2xl" placeholder="MM" min="0" max="59">
+                        <input type="number" id="seconds-input" class="w-24 p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white text-center text-2xl" placeholder="SS" min="0" max="59">
+                    </div>
+                    <div class="flex justify-center gap-4 mb-8">
+                                                <button id="start-countdown-btn" class="button-3d">Start</button>
+                        <button id="stop-countdown-btn" class="button-3d">Stop</button>
+                        <button id="reset-countdown-btn" class="button-3d">Reset</button>
+                    </div>
+                </div>
+            </div>
+            <!-- AdSense Placeholder -->
+            <div class="adsense-placeholder-card mt-8">
+                <!-- Google AdSense code goes here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-lg max-w-2xl w-full">
+            <h2 class="text-3xl font-bold mb-4">How to Use the Stopwatch & Timer</h2>
+            <div class="space-y-4">
+                <div>
+                    <h3 class="text-xl font-semibold">Stopwatch</h3>
+                    <ul class="list-disc list-inside ml-4">
+                        <li><strong>Start:</strong> Begins the stopwatch.</li>
+                        <li><strong>Stop:</strong> Pauses the stopwatch.</li>
+                        <li><strong>Reset:</strong> Clears the stopwatch and all recorded laps.</li>
+                        <li><strong>Lap:</strong> Records the current time without stopping the stopwatch.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold">Countdown Timer</h3>
+                    <ul class="list-disc list-inside ml-4">
+                        <li>Enter the desired time in the HH, MM, and SS fields.</li>
+                        <li><strong>Start:</strong> Begins the countdown.</li>
+                        <li><strong>Stop:</strong> Pauses the countdown. You can resume by pressing Start again.</li>
+                        <li><strong>Reset:</strong> Clears the countdown and resets the input fields.</li>
+                    </ul>
+                </div>
+            </div>
+            <button id="close-help-btn" class="mt-6 button-3d">Close</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+    <script src="components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Stopwatch
+            const display = document.getElementById('display');
+            const startBtn = document.getElementById('start-btn');
+            const stopBtn = document.getElementById('stop-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const lapBtn = document.getElementById('lap-btn');
+            const lapsList = document.getElementById('laps');
+
+            let startTime, elapsedTime = 0, timerInterval;
+            let isRunning = false;
+
+            function formatTime(ms) {
+                const date = new Date(ms);
+                const hours = String(date.getUTCHours()).padStart(2, '0');
+                const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+                const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+                const milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0');
+                return `${hours}:${minutes}:${seconds}<span class="text-5xl">.${milliseconds}</span>`;
+            }
+
+            function printTime() {
+                elapsedTime = Date.now() - startTime;
+                display.innerHTML = formatTime(elapsedTime);
+            }
+
+            startBtn.addEventListener('click', () => {
+                if (isRunning) return;
+                isRunning = true;
+                startTime = Date.now() - elapsedTime;
+                timerInterval = setInterval(printTime, 10);
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                lapBtn.disabled = false;
+            });
+
+            stopBtn.addEventListener('click', () => {
+                if (!isRunning) return;
+                isRunning = false;
+                clearInterval(timerInterval);
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+            });
+
+            resetBtn.addEventListener('click', () => {
+                isRunning = false;
+                clearInterval(timerInterval);
+                display.innerHTML = '00:00:00<span class="text-5xl">.000</span>';
+                elapsedTime = 0;
+                lapsList.innerHTML = '';
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                lapBtn.disabled = true;
+            });
+
+            lapBtn.addEventListener('click', () => {
+                if (!isRunning) return;
+                const lapTime = document.createElement('li');
+                lapTime.innerHTML = `Lap ${lapsList.children.length + 1}: ${display.innerHTML}`;
+                lapsList.appendChild(lapTime);
+            });
+
+            // Initial state for stopwatch buttons
+            stopBtn.disabled = true;
+            lapBtn.disabled = true;
+
+            // Modal Logic
+            const helpModal = document.getElementById('help-modal');
+            const showHelpBtn = document.getElementById('show-help-btn');
+            const closeHelpBtn = document.getElementById('close-help-btn');
+
+            showHelpBtn.addEventListener('click', () => {
+                helpModal.classList.remove('hidden');
+            });
+
+            closeHelpBtn.addEventListener('click', () => {
+                helpModal.classList.add('hidden');
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === helpModal) {
+                    helpModal.classList.add('hidden');
+                }
+            });
+
+
+            // Countdown Timer
+            const countdownDisplay = document.getElementById('countdown-display');
+            const hoursInput = document.getElementById('hours-input');
+            const minutesInput = document.getElementById('minutes-input');
+            const secondsInput = document.getElementById('seconds-input');
+            const startCountdownBtn = document.getElementById('start-countdown-btn');
+            const stopCountdownBtn = document.getElementById('stop-countdown-btn');
+            const resetCountdownBtn = document.getElementById('reset-countdown-btn');
+
+            let countdownInterval;
+            let endTime;
+            let remainingTime = 0;
+
+            function formatCountdownTime(ms) {
+                if (ms < 0) ms = 0;
+                const totalSeconds = Math.floor(ms / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
+
+            function updateCountdown() {
+                remainingTime = endTime - Date.now();
+                countdownDisplay.textContent = formatCountdownTime(remainingTime);
+
+                if (remainingTime < 100) {
+                    clearInterval(countdownInterval);
+                    countdownDisplay.textContent = "00:00:00";
+                    const timeUpNotif = document.createElement('p');
+                    timeUpNotif.textContent = "Time's up!";
+                    timeUpNotif.className = "text-green-400 text-center mt-4";
+                    document.getElementById('countdown-inputs').insertAdjacentElement('afterend', timeUpNotif);
+                    setTimeout(() => timeUpNotif.remove(), 3000);
+                    
+                    resetCountdown();
+                }
+            }
+
+            function startCountdown() {
+                const hours = parseInt(hoursInput.value) || 0;
+                const minutes = parseInt(minutesInput.value) || 0;
+                const seconds = parseInt(secondsInput.value) || 0;
+
+                let totalMilliseconds;
+
+                if (remainingTime > 0) { // Resuming
+                    totalMilliseconds = remainingTime;
+                } else { // Starting new
+                    totalMilliseconds = (hours * 3600 + minutes * 60 + seconds) * 1000;
+                }
+
+                if (totalMilliseconds <= 0) return;
+
+                endTime = Date.now() + totalMilliseconds;
+                countdownInterval = setInterval(updateCountdown, 100);
+
+                startCountdownBtn.disabled = true;
+                stopCountdownBtn.disabled = false;
+                resetCountdownBtn.disabled = false;
+                hoursInput.disabled = true;
+                minutesInput.disabled = true;
+                secondsInput.disabled = true;
+            }
+
+            function stopCountdown() {
+                clearInterval(countdownInterval);
+                remainingTime = endTime - Date.now(); // Capture remaining time accurately
+                startCountdownBtn.disabled = false;
+                stopCountdownBtn.disabled = true;
+            }
+
+            function resetCountdown() {
+                clearInterval(countdownInterval);
+                countdownDisplay.textContent = "00:00:00";
+                remainingTime = 0;
+                startCountdownBtn.disabled = false;
+                stopCountdownBtn.disabled = true;
+                resetCountdownBtn.disabled = false;
+                hoursInput.disabled = false;
+                minutesInput.disabled = false;
+                secondsInput.disabled = false;
+                hoursInput.value = '';
+                minutesInput.value = '';
+                secondsInput.value = '';
+            }
+
+            startCountdownBtn.addEventListener('click', startCountdown);
+            stopCountdownBtn.addEventListener('click', stopCountdown);
+            resetCountdownBtn.addEventListener('click', resetCountdown);
+
+            // Initial state for countdown buttons
+            stopCountdownBtn.disabled = true;
+        });
+    </script>
+</body>
+</html>
+// Fixed lap functionality
+addLap() {
+  this.laps.unshift({
+    time: this.formatTime(this.elapsedTime),
+    timestamp: Date.now()
+  });
+}
+
+const timerDisplay = document.querySelector('.timer');
+const startBtn = document.getElementById('start');
+const pauseBtn = document.getElementById('pause');
+const resetBtn = document.getElementById('reset');
+
+let startTime = 0;
+let elapsedTime = 0;
+let timerInterval;
+
+// Proper timer management with millisecond precision
+function startTimer() {
+  startTime = Date.now() - elapsedTime;
+  timerInterval = setInterval(() => {
+    elapsedTime = Date.now() - startTime;
+    timerDisplay.textContent = formatTime(elapsedTime);
+  }, 10);
+}
+
+function pauseTimer() {
+  clearInterval(timerInterval);
+  startBtn.disabled = false;
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  elapsedTime = 0;
+  timerDisplay.textContent = '00:00:00';
+  startBtn.disabled = false;
+}
+
+function formatTime(milliseconds) {
+  const date = new Date(milliseconds);
+  return date.toISOString().substr(11, 8);
+}

@@ -1,0 +1,1192 @@
+// Successful 5-file merge test
+// Preserves page order and quality
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Merge PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF files to merge them into a single document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (files.length > 1) {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => {
+                            mergedPdf.addPage(page);
+                        });
+                    }
+                    const mergedPdfBytes = await mergedPdf.save();
+                    const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'merged.pdf';
+                    link.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+// Successful 5-file merge test
+// Preserves page order and quality
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Merge PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF files to merge them into a single document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (files.length > 1) {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => {
+                            mergedPdf.addPage(page);
+                        });
+                    }
+                    const mergedPdfBytes = await mergedPdf.save();
+                    const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'merged.pdf';
+                    link.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+// Successful 5-file merge test
+// Preserves page order and quality
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Merge PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF files to merge them into a single document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (files.length > 1) {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => {
+                            mergedPdf.addPage(page);
+                        });
+                    }
+                    const mergedPdfBytes = await mergedPdf.save();
+                    const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'merged.pdf';
+                    link.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+// Successful 5-file merge test
+// Preserves page order and quality
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Merge PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF files to merge them into a single document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (files.length > 1) {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => {
+                            mergedPdf.addPage(page);
+                        });
+                    }
+                    const mergedPdfBytes = await mergedPdf.save();
+                    const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'merged.pdf';
+                    link.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+// Successful 5-file merge test
+// Preserves page order and quality
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Merge PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF files to merge them into a single document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (files.length > 1) {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => {
+                            mergedPdf.addPage(page);
+                        });
+                    }
+                    const mergedPdfBytes = await mergedPdf.save();
+                    const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'merged.pdf';
+                    link.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+// Successful 5-file merge test
+// Preserves page order and quality
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Merge PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF files to merge them into a single document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (files.length > 1) {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => {
+                            mergedPdf.addPage(page);
+                        });
+                    }
+                    const mergedPdfBytes = await mergedPdf.save();
+                    const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'merged.pdf';
+                    link.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+// Successful 5-file merge test
+// Preserves page order and quality
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Merge PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF files to merge them into a single document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (files.length > 1) {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => {
+                            mergedPdf.addPage(page);
+                        });
+                    }
+                    const mergedPdfBytes = await mergedPdf.save();
+                    const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'merged.pdf';
+                    link.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+// Successful 5-file merge test
+// Preserves page order and quality
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Merge PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF files to merge them into a single document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (files.length > 1) {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => {
+                            mergedPdf.addPage(page);
+                        });
+                    }
+                    const mergedPdfBytes = await mergedPdf.save();
+                    const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'merged.pdf';
+                    link.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+// Successful 5-file merge test
+// Preserves page order and quality
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Merge PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF files to merge them into a single document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (files.length > 1) {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => {
+                            mergedPdf.addPage(page);
+                        });
+                    }
+                    const mergedPdfBytes = await mergedPdf.save();
+                    const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'merged.pdf';
+                    link.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+// Successful 5-file merge test
+// Preserves page order and quality
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Merge PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF files to merge them into a single document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (files.length > 1) {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => {
+                            mergedPdf.addPage(page);
+                        });
+                    }
+                    const mergedPdfBytes = await mergedPdf.save();
+                    const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'merged.pdf';
+                    link.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+// Successful 5-file merge test
+// Preserves page order and quality
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Merge PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF files to merge them into a single document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (files.length > 1) {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => {
+                            mergedPdf.addPage(page);
+                        });
+                    }
+                    const mergedPdfBytes = await mergedPdf.save();
+                    const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'merged.pdf';
+                    link.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+// Successful 5-file merge test
+// Preserves page order and quality
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Merge PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF files to merge them into a single document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (files.length > 1) {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => {
+                            mergedPdf.addPage(page);
+                        });
+                    }
+                    const mergedPdfBytes = await mergedPdf.save();
+                    const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'merged.pdf';
+                    link.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+// Successful 5-file merge test
+// Preserves page order and quality
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Merge PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF files to merge them into a single document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (files.length > 1) {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => {
+                            mergedPdf.addPage(page);
+                        });
+                    }
+                    const mergedPdfBytes = await mergedPdf.save();
+                    const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'merged.pdf';
+                    link.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+// Successful 5-file merge test
+// Preserves page order and quality
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Merge PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF files to merge them into a single document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (files.length > 1) {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => {
+                            mergedPdf.addPage(page);
+                        });
+                    }
+                    const mergedPdfBytes = await mergedPdf.save();
+                    const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'merged.pdf';
+                    link.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+// Successful 5-file merge test
+// Preserves page order and quality
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Merge PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF files to merge them into a single document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (files.length > 1) {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => {
+                            mergedPdf.addPage(page);
+                        });
+                    }
+                    const mergedPdfBytes = await mergedPdf.save();
+                    const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'merged.pdf';
+                    link.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+// Successful 5-file merge test
+// Preserves page order and quality
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Merge PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF files to merge them into a single document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (files.length > 1) {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => {
+                            mergedPdf.addPage(page);
+                        });
+                    }
+                    const mergedPdfBytes = await mergedPdf.save();
+                    const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'merged.pdf';
+                    link.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+// Successful 5-file merge test
+// Preserves page order and quality
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Merge PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF files to merge them into a single document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (files.length > 1) {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const file of files) {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        copiedPages.forEach((page) => {

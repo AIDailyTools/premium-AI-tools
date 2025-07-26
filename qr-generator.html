@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Generator - Trae Tools</title>
+    <meta name="description" content="Generate custom QR codes for URLs, text, and more. Our free QR code generator is fast, simple, and reliable.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- AdSense Placeholder -->
+    <div class="adsense-placeholder-top">
+        <!-- Google AdSense code goes here -->
+    </div>
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-4 logo-3d">QR Code Generator</h1>
+        <p class="max-w-2xl mx-auto text-center text-gray-300 mb-12">Create custom QR codes for URLs, text, email, and SMS. Customize the color and add your own logo to make your QR code stand out. Our tool generates high-quality QR codes instantly in your browser, ensuring your data is secure.</p>
+        <div class="bg-white/10 p-8 rounded-xl shadow-lg flex flex-col md:flex-row gap-8">
+            <div class="w-full md:w-2/3">
+                <div class="flex border-b border-gray-600 mb-4">
+                    <button class="tab-btn active" data-tab="url">URL</button>
+                    <button class="tab-btn" data-tab="text">Text</button>
+                    <button class="tab-btn" data-tab="email">Email</button>
+                    <button class="tab-btn" data-tab="sms">SMS</button>
+                    <button class="tab-btn" data-tab="pdf">PDF</button>
+                    <button class="tab-btn" data-tab="wifi">Wi-Fi</button>
+                    <button class="tab-btn" data-tab="vcard">vCard</button>
+                </div>
+                <div id="url" class="tab-content">
+                    <label for="qr-url" class="block mb-2 font-bold">Website URL:</label>
+                    <input type="text" id="qr-url" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white" placeholder="https://www.traetools.com">
+                </div>
+                <div id="text" class="tab-content hidden">
+                    <label for="qr-text" class="block mb-2 font-bold">Your Text:</label>
+                    <textarea id="qr-text" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white" rows="4"></textarea>
+                </div>
+                <div id="email" class="tab-content hidden">
+                    <label for="qr-email-address" class="block mb-2 font-bold">Email Address:</label>
+                    <input type="email" id="qr-email-address" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white">
+                    <label for="qr-email-subject" class="block mt-4 mb-2 font-bold">Subject:</label>
+                    <input type="text" id="qr-email-subject" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white">
+                    <label for="qr-email-body" class="block mt-4 mb-2 font-bold">Message:</label>
+                    <textarea id="qr-email-body" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white" rows="3"></textarea>
+                </div>
+                <div id="sms" class="tab-content hidden">
+                    <label for="qr-sms-number" class="block mb-2 font-bold">Phone Number:</label>
+                    <input type="tel" id="qr-sms-number" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white">
+                    <label for="qr-sms-message" class="block mt-4 mb-2 font-bold">Message:</label>
+                    <textarea id="qr-sms-message" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white" rows="3"></textarea>
+                </div>
+                <div id="pdf" class="tab-content hidden">
+                    <label for="qr-pdf-url" class="block mb-2 font-bold">PDF URL (Direct Link):</label>
+                    <input type="url" id="qr-pdf-url" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white" placeholder="https://example.com/document.pdf">
+                </div>
+                <div id="wifi" class="tab-content hidden">
+                    <label for="qr-wifi-ssid" class="block mb-2 font-bold">Network Name (SSID):</label>
+                    <input type="text" id="qr-wifi-ssid" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white">
+                    <label for="qr-wifi-password" class="block mt-4 mb-2 font-bold">Password:</label>
+                    <input type="password" id="qr-wifi-password" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white">
+                    <label for="qr-wifi-encryption" class="block mt-4 mb-2 font-bold">Encryption:</label>
+                    <select id="qr-wifi-encryption" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white">
+                        <option value="WPA">WPA/WPA2</option>
+                        <option value="WEP">WEP</option>
+                        <option value="nopass">No Encryption</option>
+                    </select>
+                    <div class="mt-4 flex items-center">
+                        <input type="checkbox" id="qr-wifi-hidden" class="mr-2">
+                        <label for="qr-wifi-hidden">Hidden Network</label>
+                    </div>
+                </div>
+                <div id="vcard" class="tab-content hidden">
+                    <label for="qr-vcard-name" class="block mb-2 font-bold">Name:</label>
+                    <input type="text" id="qr-vcard-name" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white">
+                    <label for="qr-vcard-phone" class="block mt-4 mb-2 font-bold">Phone:</label>
+                    <input type="tel" id="qr-vcard-phone" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white">
+                    <label for="qr-vcard-email" class="block mt-4 mb-2 font-bold">Email:</label>
+                    <input type="email" id="qr-vcard-email" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white">
+                    <label for="qr-vcard-org" class="block mt-4 mb-2 font-bold">Organization:</label>
+                    <input type="text" id="qr-vcard-org" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white">
+                    <label for="qr-vcard-title" class="block mt-4 mb-2 font-bold">Title:</label>
+                    <input type="text" id="qr-vcard-title" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white">
+                    <label for="qr-vcard-url" class="block mt-4 mb-2 font-bold">Website:</label>
+                    <input type="url" id="qr-vcard-url" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white">
+                </div>
+                <div class="flex space-x-2 mt-4">
+                    <button id="generate-btn" class="button-3d w-full">Generate QR Code</button>
+                    <button id="help-btn" class="button-3d bg-gray-600 hover:bg-gray-700 w-full">Help</button>
+                </div>
+            </div>
+            <div class="w-full md:w-1/3">
+                <div id="qr-code-container" class="w-full h-64 bg-white p-4 rounded-lg flex items-center justify-center mb-4">
+                    <!-- QR Code will be displayed here -->
+                </div>
+                <h4 class="font-bold mb-2">Customize</h4>
+                <label for="qr-color" class="block mb-2">Color:</label>
+                <input type="color" id="qr-color" value="#000000" class="w-full h-12 p-1 rounded bg-white/20 border-2 border-transparent cursor-pointer">
+                <label for="qr-logo" class="block mt-4 mb-2">Logo:</label>
+                <input type="file" id="qr-logo" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-accent file:text-white hover:file:bg-blue-700">
+            </div>
+        </div>
+            <!-- AdSense Placeholder -->
+            <div class="adsense-placeholder-card mt-8">
+                <!-- Google AdSense code goes here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+
+    <!-- Modal -->
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 class="text-2xl font-bold mb-4">QR Code Generator Help</h2>
+            <p class="mb-2">This tool creates custom QR codes for different types of data.</p>
+            <ul class="list-disc list-inside">
+                <li><b>Select Tab:</b> Choose the type of QR code you want to create (URL, Text, Email, SMS, PDF, Wi-Fi, or vCard).</li>
+                <li><b>Enter Data:</b> Fill in the required fields for your selected tab.</li>
+                <li><b>Customize:</b> Change the color of the QR code and optionally upload a logo to be placed in the center.</li>
+                <li><b>Generate:</b> Click "Generate QR Code" to see the result.</li>
+                <li><b>Download:</b> Right-click the generated QR code and select "Save image as..." to download it.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="components.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script>
+        const generateBtn = document.getElementById('generate-btn');
+        const qrCodeContainer = document.getElementById('qr-code-container');
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const colorInput = document.getElementById('qr-color');
+        const logoInput = document.getElementById('qr-logo');
+        const helpBtn = document.getElementById('help-btn');
+        const modal = document.getElementById('help-modal');
+        const closeBtn = document.querySelector('.close-button');
+
+        let logoImage = null;
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                tabContents.forEach(c => c.classList.add('hidden'));
+                document.getElementById(btn.dataset.tab).classList.remove('hidden');
+            });
+        });
+
+        logoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    logoImage = new Image();
+                    logoImage.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        generateBtn.addEventListener('click', () => {
+            const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+            let value = '';
+
+            if (activeTab === 'url') {
+                value = document.getElementById('qr-url').value;
+            } else if (activeTab === 'text') {
+                value = document.getElementById('qr-text').value;
+            } else if (activeTab === 'email') {
+                const email = document.getElementById('qr-email-address').value;
+                const subject = document.getElementById('qr-email-subject').value;
+                const body = document.getElementById('qr-email-body').value;
+                value = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            } else if (activeTab === 'sms') {
+                const number = document.getElementById('qr-sms-number').value;
+                const message = document.getElementById('qr-sms-message').value;
+                value = `sms:${number}?body=${encodeURIComponent(message)}`;
+            } else if (activeTab === 'pdf') {
+                value = document.getElementById('qr-pdf-url').value;
+            } else if (activeTab === 'wifi') {
+                const ssid = document.getElementById('qr-wifi-ssid').value;
+                const password = document.getElementById('qr-wifi-password').value;
+                const encryption = document.getElementById('qr-wifi-encryption').value;
+                const hidden = document.getElementById('qr-wifi-hidden').checked;
+                value = `WIFI:S:${ssid};T:${encryption};P:${password};H:${hidden ? 'true' : 'false'};`;
+            } else if (activeTab === 'vcard') {
+                const name = document.getElementById('qr-vcard-name').value;
+                const phone = document.getElementById('qr-vcard-phone').value;
+                const email = document.getElementById('qr-vcard-email').value;
+                const org = document.getElementById('qr-vcard-org').value;
+                const title = document.getElementById('qr-vcard-title').value;
+                const url = document.getElementById('qr-vcard-url').value;
+                value = `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL:${phone}\nEMAIL:${email}\nORG:${org}\nTITLE:${title}\nURL:${url}\nEND:VCARD`;
+            }
+
+            if (value) {
+                qrCodeContainer.innerHTML = '';
+                const qrCanvas = document.createElement('canvas');
+                const qr = new QRious({
+                    element: qrCanvas,
+                    value: value,
+                    size: 256,
+                    foreground: colorInput.value,
+                    level: 'H' // High error correction for logo
+                });
+
+                const ctx = qrCanvas.getContext('2d');
+                if (logoImage) {
+                    const logoSize = qrCanvas.width * 0.2;
+                    const x = (qrCanvas.width - logoSize) / 2;
+                    const y = (qrCanvas.height - logoSize) / 2;
+                    ctx.drawImage(logoImage, x, y, logoSize, logoSize);
+                }
+                qrCodeContainer.appendChild(qrCanvas);
+            }
+        });
+
+        helpBtn.addEventListener('click', () => {
+            modal.style.display = 'block';
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

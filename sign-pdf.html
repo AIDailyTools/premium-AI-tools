@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Sign PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF file to sign it electronically.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" />
+                </label>
+            </div> 
+            <div class="mt-4 text-center">
+                <label for="signature-file" class="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full transition-all duration-300 ease-in-out transform hover:scale-105">
+                    Upload Signature Image
+                </label>
+                <input id="signature-file" type="file" class="hidden" accept="image/png, image/jpeg" />
+            </div>
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { PDFDocument } = PDFLib;
+            const pdfFileInput = document.getElementById('dropzone-file');
+            const signatureFileInput = document.getElementById('signature-file');
+            let pdfBytes, signatureBytes;
+
+            pdfFileInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (file && file.type === 'application/pdf') {
+                    pdfBytes = await file.arrayBuffer();
+                    if (signatureBytes) {
+                        signPdf();
+                    }
+                }
+            });
+
+            signatureFileInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (file && (file.type === 'image/png' || file.type === 'image/jpeg')) {
+                    signatureBytes = await file.arrayBuffer();
+                    if (pdfBytes) {
+                        signPdf();
+                    }
+                }
+            });
+
+            async function signPdf() {
+                const pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
+                const signatureImage = await pdfDoc.embedPng(signatureBytes);
+                const pages = pdfDoc.getPages();
+                const firstPage = pages[0];
+
+                firstPage.drawImage(signatureImage, {
+                    x: firstPage.getWidth() / 2 - 100,
+                    y: 100,
+                    width: 200,
+                    height: 100,
+                });
+
+                const signedPdfBytes = await pdfDoc.save();
+                const blob = new Blob([signedPdfBytes], { type: 'application/pdf' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'signed.pdf';
+                link.click();
+
+                // Reset for next use
+                pdfBytes = null;
+                signatureBytes = null;
+                pdfFileInput.value = '';
+                signatureFileInput.value = '';
+            }
+        });
+    </script>
+</body>
+</html>

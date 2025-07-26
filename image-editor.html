@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Image Editor - Trae Tools</title>
+    <meta name="description" content="A powerful, client-side image editor with AI features, layers, filters, and more. Inspired by Picsart, Canva, and Pixlr.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Lobster&family=Pacifico&family=Source+Code+Pro&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.14.0"></script>
+    <style>
+        .canvas-container {
+            margin: 0 auto;
+        }
+        .top-menu, .left-toolbar, .right-panel {
+            background-color: #1f2937; /* bg-gray-800 */
+        }
+        .left-toolbar button, .right-panel button {
+            color: white;
+            width: 100%;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        .left-toolbar button:hover, .right-panel button:hover {
+            background-color: #374151; /* bg-gray-700 */
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex flex-col h-screen">
+    <!-- Top Menu -->
+    <div class="top-menu p-2 flex justify-between items-center shadow-lg">
+        <div>
+            <button id="upload-btn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Upload Image</button>
+            <input type="file" id="image-upload" class="hidden" accept="image/*">
+        </div>
+        <div class="text-center">
+            <h1 class="text-2xl font-bold">Image Editor</h1>
+            <p class="text-sm text-gray-400">A powerful, client-side image editor with AI features, layers, filters, and more.</p>
+        </div>
+        <div>
+            <button id="download-btn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">Download</button>
+            <button id="help-btn" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded ml-2">Help</button>
+        </div>
+    </div>
+
+    <div class="flex flex-grow overflow-hidden">
+        <!-- Left Toolbar -->
+        <div class="left-toolbar w-48 p-2 space-y-2">
+            <button id="crop-tool">Start Crop</button>
+            <button id="rotate-left-tool">Rotate Left</button>
+            <button id="rotate-right-tool">Rotate Right</button>
+            <button id="resize-tool">Resize</button>
+            <button id="remove-bg-tool">Remove Background</button>
+            <button id="filter-tool">Filters</button>
+            <button id="adjust-tool">Adjust</button>
+            <button id="text-tool">Text</button>
+            <button id="draw-tool">Draw</button>
+        </div>
+
+        <!-- Main Canvas Area -->
+        <main class="flex-grow bg-gray-700 flex items-center justify-center overflow-auto">
+            <canvas id="canvas"></canvas>
+        </main>
+
+        <!-- Right Panel -->
+        <div class="right-panel w-64 p-4">
+            <h3 class="text-xl font-bold mb-4">Layers</h3>
+            <div id="layers-panel"></div>
+            <hr class="my-4 border-gray-600">
+            <h3 class="text-xl font-bold mb-4">Properties</h3>
+            <div id="properties-panel"></div>
+            <!-- Adjustments Panel (Initially Hidden) -->
+            <div id="adjust-panel" class="hidden">
+                <h3 class="text-xl font-bold mb-4">Adjustments</h3>
+                <div>
+                    <label for="brightness">Brightness</label>
+                    <input type="range" id="brightness" min="-1" max="1" step="0.01" value="0" class="w-full">
+                </div>
+                <div>
+                    <label for="contrast">Contrast</label>
+                    <input type="range" id="contrast" min="-1" max="1" step="0.01" value="0" class="w-full">
+                </div>
+                <div>
+                    <label for="saturation">Saturation</label>
+                    <input type="range" id="saturation" min="-1" max="1" step="0.01" value="0" class="w-full">
+                </div>
+                 <div>
+                    <label for="exposure">Exposure</label>
+                    <input type="range" id="exposure" min="-1" max="1" step="0.01" value="0" class="w-full">
+                </div>
+            </div>
+            <!-- Filters Panel (Initially Hidden) -->
+            <div id="filter-panel" class="hidden">
+                 <h3 class="text-xl font-bold mb-4">Filters</h3>
+                 <div class="grid grid-cols-2 gap-2">
+                    <button id="grayscale-btn" class="filter-btn bg-gray-600 hover:bg-gray-500 p-2 rounded">Grayscale</button>
+                    <button id="sepia-btn" class="filter-btn bg-gray-600 hover:bg-gray-500 p-2 rounded">Sepia</button>
+                    <button id="vintage-btn" class="filter-btn bg-gray-600 hover:bg-gray-500 p-2 rounded">Vintage</button>
+                    <button id="reset-filters-btn" class="filter-btn bg-red-600 hover:bg-red-500 p-2 rounded col-span-2">Reset Filters</button>
+                 </div>
+                 <hr class="my-4 border-gray-600">
+                 <div>
+                    <label for="blur">Blur</label>
+                    <input type="range" id="blur" min="0" max="1" step="0.01" value="0" class="w-full">
+                </div>
+            </div>
+            <!-- Drawing Panel (Initially Hidden) -->
+            <div id="draw-panel" class="hidden">
+                <h3 class="text-xl font-bold mb-4">Drawing Tools</h3>
+                <div>
+                    <label for="draw-color">Color</label>
+                    <input type="color" id="draw-color" value="#ffffff" class="w-full">
+                </div>
+                <div>
+                    <label for="draw-width">Brush Size</label>
+                    <input type="range" id="draw-width" min="1" max="50" value="5" class="w-full">
+                </div>
+                <div>
+                    <label for="draw-opacity">Opacity</label>
+                    <input type="range" id="draw-opacity" min="0" max="1" step="0.01" value="1" class="w-full">
+                </div>
+                <button id="drawing-mode-toggle" class="bg-blue-600 hover:bg-blue-700 p-2 rounded w-full mt-4">Start/Stop Drawing</button>
+            </div>
+            <!-- Text Panel (Initially Hidden) -->
+            <div id="text-panel" class="hidden">
+                <h3 class="text-xl font-bold mb-4">Text Tools</h3>
+                <textarea id="text-input" class="w-full bg-gray-700 p-2 rounded" placeholder="Enter text..."></textarea>
+                <button id="add-text-btn" class="bg-blue-600 hover:bg-blue-700 p-2 rounded w-full mt-2">Add Text</button>
+                <hr class="my-4 border-gray-600">
+                <div id="text-controls" class="hidden">
+                    <label for="font-family">Font Family</label>
+                    <select id="font-family" class="w-full bg-gray-700 p-2 rounded">
+                        <option>Arial</option>
+                        <option>Roboto</option>
+                        <option>Lobster</option>
+                        <option>Pacifico</option>
+                        <option>Source Code Pro</option>
+                    </select>
+                    <label for="font-size">Font Size</label>
+                    <input type="range" id="font-size" min="1" max="200" value="40" class="w-full">
+                    <label for="font-color">Color</label>
+                    <input type="color" id="font-color" value="#ffffff" class="w-full">
+                    <button id="font-bold" class="font-bold">B</button>
+                    <button id="font-italic" class="italic">I</button>
+                </div>
+            </div>
+            <!-- Resize Panel (Initially Hidden) -->
+            <div id="resize-panel" class="hidden">
+                <h3 class="text-xl font-bold mb-4">Resize Canvas</h3>
+                <div>
+                    <label for="resize-width">Width</label>
+                    <input type="number" id="resize-width" class="w-full bg-gray-700 p-2 rounded">
+                </div>
+                <div>
+                    <label for="resize-height">Height</label>
+                    <input type="number" id="resize-height" class="w-full bg-gray-700 p-2 rounded">
+                </div>
+                <div class="flex items-center mt-2">
+                    <input type="checkbox" id="aspect-ratio-lock" checked>
+                    <label for="aspect-ratio-lock" class="ml-2">Lock Aspect Ratio</label>
+                </div>
+                <button id="apply-resize" class="bg-blue-600 hover:bg-blue-700 p-2 rounded w-full mt-4">Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 class="text-2xl font-bold mb-4">Image Editor Help</h2>
+            <p class="mb-2">Welcome to the Advanced Image Editor! Here's a quick guide:</p>
+            <ul class="list-disc list-inside">
+                <li><b>Upload Image:</b> Click the "Upload Image" button to start editing your photo.</li>
+                <li><b>Left Toolbar:</b> Access all the main tools like Crop, Rotate, Resize, Filters, and more.</li>
+                <li><b>Right Panel:</b> Manage layers and view properties of the selected object.</li>
+                <li><b>Adjustments:</b> Fine-tune brightness, contrast, saturation, and exposure.</li>
+                <li><b>Filters:</b> Apply pre-set filters like Grayscale, Sepia, and Vintage.</li>
+                <li><b>Text & Drawing:</b> Add text and draw on your image with customizable options.</li>
+                <li><b>Remove Background:</b> Use the AI-powered tool to remove the background from your image (requires an internet connection).</li>
+                <li><b>Download:</b> Save your masterpiece to your computer.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const canvas = new fabric.Canvas('canvas', {
+            width: 800,
+            height: 600,
+            backgroundColor: '#4a5568' // bg-gray-600
+        });
+
+        const imageUpload = document.getElementById('image-upload');
+        const uploadBtn = document.getElementById('upload-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const adjustTool = document.getElementById('adjust-tool');
+        const filterTool = document.getElementById('filter-tool');
+        const drawTool = document.getElementById('draw-tool');
+        const textTool = document.getElementById('text-tool');
+        const cropTool = document.getElementById('crop-tool');
+        const rotateLeftTool = document.getElementById('rotate-left-tool');
+        const rotateRightTool = document.getElementById('rotate-right-tool');
+        const resizeTool = document.getElementById('resize-tool');
+        const removeBgTool = document.getElementById('remove-bg-tool');
+        const adjustPanel = document.getElementById('adjust-panel');
+        const filterPanel = document.getElementById('filter-panel');
+        const drawPanel = document.getElementById('draw-panel');
+        const textPanel = document.getElementById('text-panel');
+        const resizePanel = document.getElementById('resize-panel');
+        const layersPanel = document.getElementById('layers-panel');
+        const helpBtn = document.getElementById('help-btn');
+        const modal = document.getElementById('help-modal');
+        const closeBtn = document.querySelector('.close-button');
+
+        uploadBtn.addEventListener('click', () => imageUpload.click());
+
+        helpBtn.addEventListener('click', () => {
+            modal.style.display = 'block';
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        adjustTool.addEventListener('click', () => {
+            filterPanel.classList.add('hidden');
+            adjustPanel.classList.toggle('hidden');
+        });
+
+        filterTool.addEventListener('click', () => {
+            adjustPanel.classList.add('hidden');
+            drawPanel.classList.add('hidden');
+            filterPanel.classList.toggle('hidden');
+        });
+
+        drawTool.addEventListener('click', () => {
+            adjustPanel.classList.add('hidden');
+            filterPanel.classList.add('hidden');
+            textPanel.classList.add('hidden');
+            drawPanel.classList.toggle('hidden');
+        });
+
+        textTool.addEventListener('click', () => {
+            adjustPanel.classList.add('hidden');
+            filterPanel.classList.add('hidden');
+            drawPanel.classList.add('hidden');
+            resizePanel.classList.add('hidden');
+            textPanel.classList.toggle('hidden');
+        });
+
+        resizeTool.addEventListener('click', () => {
+            adjustPanel.classList.add('hidden');
+            filterPanel.classList.add('hidden');
+            drawPanel.classList.add('hidden');
+            textPanel.classList.add('hidden');
+            resizePanel.classList.toggle('hidden');
+            const image = canvas.getObjects().find(obj => obj.type === 'image');
+            if(image){
+                document.getElementById('resize-width').value = image.getScaledWidth();
+                document.getElementById('resize-height').value = image.getScaledHeight();
+            }
+        });
+
+        imageUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (f) => {
+                fabric.Image.fromURL(f.target.result, (img) => {
+                    // Clear canvas and add new image as an object
+                    canvas.clear();
+                    canvas.setWidth(img.width > 1200 ? 1200 : img.width);
+                    canvas.setHeight(img.height > 800 ? 800 : img.height);
+                    img.set({
+                        left: 0,
+                        top: 0,
+                        selectable: true
+                    });
+                    canvas.add(img);
+                    canvas.setActiveObject(img);
+                    canvas.renderAll();
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            const dataURL = canvas.toDataURL({
+                format: 'png',
+                quality: 1
+            });
+            const link = document.createElement('a');
+            link.href = dataURL;
+            link.download = 'edited-image.png';
+            link.click();
+        });
+
+        // Image Adjustments
+        const brightness = document.getElementById('brightness');
+        const contrast = document.getElementById('contrast');
+        const saturation = document.getElementById('saturation');
+        const exposure = document.getElementById('exposure');
+
+        function applyFilter(index, filter) {
+            const obj = canvas.getActiveObject();
+            if (obj) {
+                obj.filters[index] = filter;
+                obj.applyFilters();
+                canvas.renderAll();
+            }
+        }
+
+        brightness.oninput = () => applyFilter(0, new fabric.Image.filters.Brightness({ brightness: parseFloat(brightness.value) }));
+        contrast.oninput = () => applyFilter(1, new fabric.Image.filters.Contrast({ contrast: parseFloat(contrast.value) }));
+        saturation.oninput = () => applyFilter(2, new fabric.Image.filters.Saturation({ saturation: parseFloat(saturation.value) }));
+        exposure.oninput = () => applyFilter(3, new fabric.Image.filters.Exposure({ exposure: parseFloat(exposure.value) }));
+
+        // Image Filters
+        const grayscaleBtn = document.getElementById('grayscale-btn');
+        const sepiaBtn = document.getElementById('sepia-btn');
+        const vintageBtn = document.getElementById('vintage-btn');
+        const resetFiltersBtn = document.getElementById('reset-filters-btn');
+        const blur = document.getElementById('blur');
+
+        function applyFilterValue(index, filter) {
+            const obj = canvas.getActiveObject();
+            if (obj) {
+                obj.filters[index] = filter;
+                obj.applyFilters();
+                canvas.renderAll();
+            }
+        }
+
+        grayscaleBtn.onclick = () => applyFilterValue(5, new fabric.Image.filters.Grayscale());
+        sepiaBtn.onclick = () => applyFilterValue(6, new fabric.Image.filters.Sepia());
+        vintageBtn.onclick = () => applyFilterValue(7, new fabric.Image.filters.Vintage());
+        blur.oninput = () => applyFilterValue(8, new fabric.Image.filters.Blur({ blur: parseFloat(blur.value) }));
+
+        resetFiltersBtn.onclick = () => {
+            const obj = canvas.getActiveObject();
+            if (obj) {
+                // Reset adjustment sliders
+                brightness.value = 0;
+                contrast.value = 0;
+                saturation.value = 0;
+                exposure.value = 0;
+                blur.value = 0;
+                // Clear all filters
+                obj.filters = [];
+                obj.applyFilters();
+                canvas.renderAll();
+            }
+        };
+
+        // Drawing Tools
+        const drawColor = document.getElementById('draw-color');
+        const drawWidth = document.getElementById('draw-width');
+        const drawOpacity = document.getElementById('draw-opacity');
+        const drawingModeToggle = document.getElementById('drawing-mode-toggle');
+
+        drawingModeToggle.onclick = () => {
+            canvas.isDrawingMode = !canvas.isDrawingMode;
+            drawingModeToggle.textContent = canvas.isDrawingMode ? 'Stop Drawing' : 'Start Drawing';
+        };
+
+        drawColor.onchange = () => canvas.freeDrawingBrush.color = drawColor.value;
+        drawWidth.oninput = () => canvas.freeDrawingBrush.width = parseInt(drawWidth.value, 10) || 1;
+        drawOpacity.oninput = () => canvas.freeDrawingBrush.color = fabric.Color.fromHex(drawColor.value).setAlpha(parseFloat(drawOpacity.value)).toRgba();
+
+        // Set initial brush properties
+        canvas.freeDrawingBrush.color = drawColor.value;
+        canvas.freeDrawingBrush.width = parseInt(drawWidth.value, 10) || 1;
+
+        // Text Tools
+        const textInput = document.getElementById('text-input');
+        const addTextBtn = document.getElementById('add-text-btn');
+        const textControls = document.getElementById('text-controls');
+        const fontFamily = document.getElementById('font-family');
+        const fontSize = document.getElementById('font-size');
+        const fontColor = document.getElementById('font-color');
+        const fontBold = document.getElementById('font-bold');
+        const fontItalic = document.getElementById('font-italic');
+
+        addTextBtn.onclick = () => {
+            const text = new fabric.IText(textInput.value || 'Sample Text', {
+                left: 50,
+                top: 50,
+                fontFamily: 'Arial',
+                fill: '#ffffff',
+                fontSize: 40
+            });
+            canvas.add(text);
+            canvas.setActiveObject(text);
+        };
+
+        canvas.on('selection:created', (e) => {
+            if (e.target.type === 'i-text') {
+                textControls.classList.remove('hidden');
+            }
+        });
+
+        canvas.on('selection:cleared', () => {
+            textControls.classList.add('hidden');
+        });
+
+        fontFamily.onchange = () => canvas.getActiveObject()?.set('fontFamily', fontFamily.value) && canvas.renderAll();
+        fontSize.oninput = () => canvas.getActiveObject()?.set('fontSize', parseInt(fontSize.value, 10)) && canvas.renderAll();
+        fontColor.onchange = () => canvas.getActiveObject()?.set('fill', fontColor.value) && canvas.renderAll();
+        fontBold.onclick = () => canvas.getActiveObject()?.set('fontWeight', canvas.getActiveObject().fontWeight === 'bold' ? 'normal' : 'bold') && canvas.renderAll();
+        fontItalic.onclick = () => canvas.getActiveObject()?.set('fontStyle', canvas.getActiveObject().fontStyle === 'italic' ? 'normal' : 'italic') && canvas.renderAll();
+
+        // Layer Management
+        function updateLayers() {
+            layersPanel.innerHTML = '';
+            canvas.getObjects().forEach((obj, index) => {
+                const layer = document.createElement('div');
+                layer.className = 'p-2 mb-2 bg-gray-700 rounded flex justify-between items-center cursor-pointer';
+                layer.textContent = `Layer ${index + 1}: ${obj.type}`;
+                layer.onclick = () => {
+                    canvas.setActiveObject(obj);
+                    canvas.renderAll();
+                };
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'X';
+                deleteBtn.className = 'bg-red-600 hover:bg-red-500 px-2 rounded';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    canvas.remove(obj);
+                    updateLayers();
+                };
+
+                layer.appendChild(deleteBtn);
+                layersPanel.appendChild(layer);
+            });
+        }
+
+        canvas.on('object:added', updateLayers);
+         canvas.on('object:removed', updateLayers);
+
+        // Crop and Rotate
+        let cropRect;
+        cropTool.addEventListener('click', () => {
+            if (cropTool.textContent === 'Start Crop') {
+                cropTool.textContent = 'Apply Crop';
+                cropRect = new fabric.Rect({
+                    fill: 'rgba(0,0,0,0.3)',
+                    originX: 'left',
+                    originY: 'top',
+                    stroke: 'black',
+                    strokeDashArray: [4, 4],
+                    opacity: 1,
+                    width: 200,
+                    height: 150,
+                    left: 100,
+                    top: 100,
+                    cornerColor: 'white',
+                    cornerSize: 10,
+                    transparentCorners: false,
+                    hasRotatingPoint: false,
+                });
+                canvas.add(cropRect);
+                canvas.setActiveObject(cropRect);
+            } else {
+                cropTool.textContent = 'Start Crop';
+                const activeObject = canvas.getActiveObject();
+                if (activeObject && activeObject === cropRect) {
+                    const image = canvas.getObjects().find(obj => obj.type === 'image');
+                    if (image) {
+                        const cropped = new Image();
+                        cropped.src = image.toDataURL({
+                            left: cropRect.left,
+                            top: cropRect.top,
+                            width: cropRect.getScaledWidth(),
+                            height: cropRect.getScaledHeight(),
+                        });
+                        cropped.onload = () => {
+                            canvas.clear();
+                            const newImg = new fabric.Image(cropped);
+                            canvas.setWidth(newImg.width);
+                            canvas.setHeight(newImg.height);
+                            canvas.add(newImg);
+                            canvas.renderAll();
+                        };
+                    }
+                }
+                canvas.remove(cropRect);
+            }
+        });
+
+        rotateLeftTool.addEventListener('click', () => {
+            const obj = canvas.getActiveObject();
+            if (obj) {
+                obj.rotate(obj.angle - 90);
+                canvas.renderAll();
+            }
+        });
+
+        rotateRightTool.addEventListener('click', () => {
+            const obj = canvas.getActiveObject();
+            if (obj) {
+                obj.rotate(obj.angle + 90);
+                canvas.renderAll();
+            }
+        });
+
+        // Resize
+        const resizeWidth = document.getElementById('resize-width');
+        const resizeHeight = document.getElementById('resize-height');
+        const aspectRatioLock = document.getElementById('aspect-ratio-lock');
+        const applyResize = document.getElementById('apply-resize');
+        let originalAspectRatio;
+
+        canvas.on('object:scaling', (e) => {
+            if(e.target.type === 'image'){
+                originalAspectRatio = e.target.width / e.target.height;
+            }
+        });
+
+        resizeWidth.addEventListener('input', () => {
+            if (aspectRatioLock.checked) {
+                const newHeight = Math.round(resizeWidth.value / originalAspectRatio);
+                resizeHeight.value = newHeight;
+            }
+        });
+
+        resizeHeight.addEventListener('input', () => {
+            if (aspectRatioLock.checked) {
+                const newWidth = Math.round(resizeHeight.value * originalAspectRatio);
+                resizeWidth.value = newWidth;
+            }
+        });
+
+        applyResize.addEventListener('click', () => {
+            const width = parseInt(resizeWidth.value, 10);
+            const height = parseInt(resizeHeight.value, 10);
+            const obj = canvas.getObjects().find(o => o.type === 'image');
+
+            if (obj && width > 0 && height > 0) {
+                obj.scaleToWidth(width);
+                obj.scaleToHeight(height);
+                canvas.setWidth(width);
+                canvas.setHeight(height);
+                canvas.renderAll();
+            }
+        });
+
+        // AI Background Removal
+        removeBgTool.addEventListener('click', async () => {
+            const imageObject = canvas.getObjects().find(obj => obj.type === 'image');
+            if (!imageObject) {
+                alert('Please upload an image first.');
+                return;
+            }
+
+            removeBgTool.textContent = 'Processing...';
+            removeBgTool.disabled = true;
+
+            const segmentation = await new Promise(resolve => {
+                const worker = new Worker(URL.createObjectURL(new Blob([`
+                    import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.14.0';
+                    self.onmessage = async (event) => {
+                        const remover = await pipeline('image-segmentation', 'Xenova/detr-resnet-50-panoptic');
+                        const output = await remover(event.data.url, { threshold: 0.8 });
+                        self.postMessage(output);
+                    };
+                `], { type: 'application/javascript' })));
+
+                worker.onmessage = (event) => {
+                    resolve(event.data);
+                    worker.terminate();
+                };
+
+                worker.postMessage({ url: imageObject.getSrc() });
+            });
+
+            const originalImage = imageObject.getElement();
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = originalImage.width;
+            tempCanvas.height = originalImage.height;
+            tempCtx.drawImage(originalImage, 0, 0);
+
+            const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+            const data = imageData.data;
+
+            for (let i = 0; i < data.length; i += 4) {
+                const x = (i / 4) % tempCanvas.width;
+                const y = Math.floor((i / 4) / tempCanvas.width);
+
+                let shouldBeTransparent = true;
+                for (const segment of segmentation) {
+                    if (segment.label === 'person' || segment.label === 'cat' || segment.label === 'dog') { // Add more labels as needed
+                        const maskCanvas = document.createElement('canvas');
+                        maskCanvas.width = tempCanvas.width;
+                        maskCanvas.height = tempCanvas.height;
+                        const maskCtx = maskCanvas.getContext('2d');
+                        maskCtx.drawImage(segment.mask, 0, 0, tempCanvas.width, tempCanvas.height);
+                        if (maskCtx.getImageData(x, y, 1, 1).data[0] > 0) {
+                            shouldBeTransparent = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (shouldBeTransparent) {
+                    data[i + 3] = 0; // Set alpha to 0
+                }
+            }
+
+            tempCtx.putImageData(imageData, 0, 0);
+
+            fabric.Image.fromURL(tempCanvas.toDataURL(), (newImg) => {
+                canvas.remove(imageObject);
+                canvas.add(newImg);
+                canvas.renderAll();
+                removeBgTool.textContent = 'Remove Background';
+                removeBgTool.disabled = false;
+            });
+        });
+
+
+        console.log('Image editor initialized with fabric.js');
+
+    </script>
+</body>
+</html>
+
+/* Added modern UI features */
+.left-toolbar {
+  @apply w-64 border-r border-gray-600;
+  button[data-active='true'] { 
+    @apply bg-blue-600;
+  }
+}
+
+/* Touch optimization */
+@media (pointer: coarse) {
+  .left-toolbar { 
+    @apply w-20;
+  }
+}
+
+/* AI Features Section */
+#ai-tools-panel {
+  @apply p-4 border-t border-gray-600 mt-auto;
+  .ai-process-indicator {
+    @apply animate-pulse text-xs text-blue-400;
+  }
+}
+
+/* Enhanced Canvas Controls */
+.canvas-controls {
+  @apply fixed bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-gray-800 p-2 rounded-lg shadow-xl;
+  button {
+    @apply w-10 h-10 flex items-center justify-center rounded-md hover:bg-gray-700;
+  }
+}
+
+/* Enhanced Canvas Controls */
+.canvas-controls {
+  @apply fixed bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-gray-800 p-2 rounded-lg shadow-xl;
+  button {
+    @apply w-10 h-10 flex items-center justify-center rounded-md hover:bg-gray-700;
+  }
+}
+
+/* Touch Optimization */
+@media (pointer: coarse) {
+  .left-toolbar { @apply w-20; }
+  .left-toolbar button { @apply justify-center; }
+  .left-toolbar button span { @apply hidden; }
+}
+
+/* Keyboard Shortcuts */
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.metaKey) {
+    switch(e.key.toLowerCase()) {
+      case 'z': undoManager.undo(); break;
+      case 'y': undoManager.redo(); break;
+    }
+  }
+});
+
+// ... existing code ...

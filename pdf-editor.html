@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Editor - Trae Tools</title>
+    <meta name="description" content="Edit your PDF files online for free. Add text, images, and annotations with our easy-to-use PDF editor.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-4 logo-3d">PDF Editor</h1>
+        <p class="text-lg text-gray-400 mb-8 max-w-3xl mx-auto text-center">Upload, edit, and save your PDF documents with ease. Our editor allows you to add text and images directly in your browser, ensuring your files remain private and secure. Perfect for quick annotations and modifications without the need for complex software.</p>
+        
+        <div class="bg-white/10 p-8 rounded-xl">
+            <div id="pdf-editor-container" class="max-w-5xl mx-auto">
+                <!-- Upload Section -->
+                <div id="upload-section" class="text-center mb-8">
+                    <input type="file" id="pdf-upload" accept="application/pdf" class="hidden">
+                    <label for="pdf-upload" class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full transition-all duration-300 ease-in-out transform hover:scale-105">
+                        Select PDF File
+                    </label>
+                    <p class="text-gray-400 mt-4">or drag and drop a PDF file here</p>
+                </div>
+
+                <!-- Editor Workspace -->
+                <div id="editor-workspace" class="hidden">
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <!-- Toolbar -->
+                        <div id="toolbar" class="w-full md:w-1/4 bg-white/5 p-4 rounded-lg">
+                            <h3 class="text-xl font-bold mb-4">Tools</h3>
+                            <div class="space-y-4">
+                                <button id="add-text-btn" class="w-full py-2 px-4 rounded bg-indigo-600 hover:bg-indigo-700">Add Text</button>
+                                <button id="add-image-btn" class="w-full py-2 px-4 rounded bg-indigo-600 hover:bg-indigo-700">Add Image</button>
+                                <input type="file" id="image-upload" accept="image/*" class="hidden">
+                            </div>
+                        </div>
+
+                        <!-- PDF Viewer -->
+                        <div id="pdf-viewer" class="w-full md:w-3/4 h-[70vh] bg-black/20 rounded-lg overflow-auto relative">
+                            <canvas id="pdf-canvas"></canvas>
+                        </div>
+                    </div>
+                    <div class="text-center mt-8">
+                        <button id="save-pdf-btn" class="py-3 px-8 rounded-full bg-green-600 hover:bg-green-700 font-bold">Save & Download PDF</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+    <script src="components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { PDFDocument, rgb, StandardFonts } = PDFLib;
+            const pdfjsLib = window['pdfjs-dist/build/pdf'];
+            pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js`;
+
+            const uploadSection = document.getElementById('upload-section');
+            const editorWorkspace = document.getElementById('editor-workspace');
+            const pdfUpload = document.getElementById('pdf-upload');
+            const pdfCanvas = document.getElementById('pdf-canvas');
+            const addTextBtn = document.getElementById('add-text-btn');
+            const addImageBtn = document.getElementById('add-image-btn');
+            const imageUpload = document.getElementById('image-upload');
+            const savePdfBtn = document.getElementById('save-pdf-btn');
+
+            let pdfDoc = null;
+            let pdfBytes = null;
+            let currentPage = 1;
+
+            pdfUpload.addEventListener('change', handlePdfUpload);
+
+            function handlePdfUpload(e) {
+                const file = e.target.files[0];
+                if (file && file.type === 'application/pdf') {
+                    const reader = new FileReader();
+                    reader.onload = async (event) => {
+                        pdfBytes = new Uint8Array(event.target.result);
+                        pdfDoc = await PDFDocument.load(pdfBytes);
+                        uploadSection.classList.add('hidden');
+                        editorWorkspace.classList.remove('hidden');
+                        renderPage(currentPage);
+                    };
+                    reader.readAsArrayBuffer(file);
+                }
+            }
+
+            async function renderPage(pageNum) {
+                const loadingTask = pdfjsLib.getDocument({ data: pdfBytes });
+                const pdf = await loadingTask.promise;
+                const page = await pdf.getPage(pageNum);
+                const viewport = page.getViewport({ scale: 1.5 });
+                const context = pdfCanvas.getContext('2d');
+                pdfCanvas.height = viewport.height;
+                pdfCanvas.width = viewport.width;
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                await page.render(renderContext).promise;
+            }
+
+            addTextBtn.addEventListener('click', () => {
+                const text = prompt('Enter text to add:');
+                if (text) {
+                    addTextToPdf(text, 50, 50);
+                }
+            });
+
+            addImageBtn.addEventListener('click', () => imageUpload.click());
+
+            imageUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        addImageToPdf(event.target.result, 100, 100);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            async function addTextToPdf(text, x, y) {
+                const page = pdfDoc.getPages()[currentPage - 1];
+                const { width, height } = page.getSize();
+                const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+                page.drawText(text, {
+                    x: x,
+                    y: height - y - 20, // Adjust y-coordinate from top-left
+                    font: font,
+                    size: 24,
+                    color: rgb(0, 0, 0),
+                });
+                const modifiedPdfBytes = await pdfDoc.save();
+                pdfBytes = modifiedPdfBytes;
+                renderPage(currentPage);
+            }
+
+            async function addImageToPdf(imageDataUrl, x, y) {
+                const page = pdfDoc.getPages()[currentPage - 1];
+                const imageBytes = await fetch(imageDataUrl).then(res => res.arrayBuffer());
+                const image = await pdfDoc.embedPng(imageBytes);
+                const { width, height } = image.scale(0.25);
+                page.drawImage(image, {
+                    x: x,
+                    y: page.getHeight() - y - height,
+                    width: width,
+                    height: height,
+                });
+                const modifiedPdfBytes = await pdfDoc.save();
+                pdfBytes = modifiedPdfBytes;
+                renderPage(currentPage);
+            }
+
+            savePdfBtn.addEventListener('click', async () => {
+                const modifiedPdfBytes = await pdfDoc.save();
+                const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'edited.pdf';
+                link.click();
+            });
+        });
+    </script>
+</body>
+</html>

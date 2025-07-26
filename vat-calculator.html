@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EU VAT Calculator - Trae Tools</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-800">
+    <div id="app" class="max-w-2xl mx-auto p-6">
+        <div class="bg-white dark:bg-gray-700 rounded-lg shadow-xl p-8">
+            <h1 class="text-2xl font-bold mb-6">EU VAT Calculator</h1>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block mb-2">Country:</label>
+                    <select v-model="selectedCountry">
+                        <option v-for="country in euCountries" :value="country">
+                            {{ country.name }} ({{ country.rate }}%)
+                        </option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block mb-2">Net Amount (€):</label>
+                    <input type="number" v-model="netAmount" @input="calculate" 
+                           class="w-full p-2 rounded border" placeholder="Enter amount">
+                </div>
+
+                <div class="bg-gray-100 dark:bg-gray-600 p-4 rounded-lg">
+                    <p class="font-semibold">VAT Amount: €{{ vatAmount }}</p>
+                    <p class="font-semibold">Gross Amount: €{{ grossAmount }}</p>
+                </div>
+
+                <button @click="showPremium = true" 
+                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full">
+                    Save Calculation (Premium Feature)
+                </button>
+            </div>
+        </div>
+
+        <!-- Premium Modal -->
+        <div v-if="showPremium" class="fixed inset-0 bg-black/50 flex items-center justify-center">
+            <div class="bg-white dark:bg-gray-700 p-8 rounded-lg max-w-md">
+                <h2 class="text-xl font-bold mb-4">Upgrade to Premium</h2>
+                <p class="mb-4">Unlock multi-country VAT calculations and save unlimited transactions.</p>
+                <button @click="handlePayment" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                    Subscribe Now - €9.99/month
+                </button>
+                <button @click="showPremium = false" class="ml-4 text-gray-600 dark:text-gray-300">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const stripe = Stripe('pk_test_YOUR_STRIPE_KEY');
+
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    netAmount: 0,
+                    selectedCountry: { rate: 21, name: 'Belgium' },
+                    euCountries: [
+                        { rate: 20, name: 'United Kingdom' },
+                        { rate: 19, name: 'Germany' },
+                        { rate: 21, name: 'France' },
+                        { rate: 22, name: 'Italy' },
+                        { rate: 21, name: 'Spain' }
+                    ],
+                    showPremium: false
+                }
+            },
+            computed: {
+                vatAmount() {
+                    return (this.netAmount * this.selectedCountry.rate / 100).toFixed(2)
+                },
+                grossAmount() {
+                    return (this.netAmount * (1 + this.selectedCountry.rate / 100)).toFixed(2)
+                }
+            },
+            methods: {
+                async handlePayment() {
+                    try {
+                        const response = await fetch('/create-subscription', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ priceId: 'price_12345' })
+                        });
+                        const session = await response.json();
+                        await stripe.redirectToCheckout({ sessionId: session.id });
+                    } catch (error) {
+                        console.error('Payment error:', error);
+                    }
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>

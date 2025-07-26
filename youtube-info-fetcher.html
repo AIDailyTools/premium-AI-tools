@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Info Fetcher - Trae Tools</title>
+    <meta name="description" content="Fetch information about any YouTube video, including its title, author, and thumbnail, by simply pasting the URL. A quick and easy way to get video details.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- AdSense Placeholder -->
+    <div class="adsense-placeholder-top">
+        <!-- Google AdSense code goes here -->
+    </div>
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+                <div class="flex justify-between items-center mb-8">
+            <h1 class="text-4xl font-bold logo-3d">YouTube Video Info Fetcher</h1>
+            <button id="show-help-btn" class="button-3d">Show Help</button>
+        </div>
+        <div class="bg-white/10 p-8 rounded-xl shadow-lg">
+            <div class="max-w-2xl mx-auto">
+                <div class="relative mb-4">
+                    <input type="text" id="video-url" placeholder="Enter YouTube video URL" class="w-full py-3 px-4 rounded-full bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white">
+                                        <button id="fetch-btn" class="absolute right-2 top-1/2 -translate-y-1/2 button-3d">
+                        Fetch Info
+                    </button>
+                </div>
+                <div id="video-info" class="mt-8"></div>
+            </div>
+            <!-- AdSense Placeholder -->
+            <div class="adsense-placeholder-card mt-8">
+                <!-- Google AdSense code goes here -->
+            </div>
+        </div>
+    </main>
+
+        <!-- Help Modal -->
+    <div id="help-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-lg max-w-2xl w-full">
+            <h2 class="text-3xl font-bold mb-4">How to Use the YouTube Video Info Fetcher</h2>
+            <div class="space-y-4">
+                <p>This tool allows you to fetch details about a YouTube video.</p>
+                <ul class="list-disc list-inside ml-4">
+                    <li><strong>Enter a URL:</strong> Paste the YouTube video URL into the input field.</li>
+                    <li><strong>Fetch Info:</strong> Click the 'Fetch Info' button to get the video's title, author, and thumbnail.</li>
+                </ul>
+            </div>
+            <button id="close-help-btn" class="mt-6 button-3d">Close</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+    <script src="components.js"></script>
+    <script>
+        const fetchBtn = document.getElementById('fetch-btn');
+                const videoUrlInput = document.getElementById('video-url');
+        const videoInfoContainer = document.getElementById('video-info');
+
+        // Modal Logic
+        const helpModal = document.getElementById('help-modal');
+        const showHelpBtn = document.getElementById('show-help-btn');
+        const closeHelpBtn = document.getElementById('close-help-btn');
+
+        showHelpBtn.addEventListener('click', () => {
+            helpModal.classList.remove('hidden');
+        });
+
+        closeHelpBtn.addEventListener('click', () => {
+            helpModal.classList.add('hidden');
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === helpModal) {
+                helpModal.classList.add('hidden');
+            }
+        });
+
+        fetchBtn.addEventListener('click', async () => {
+            const url = videoUrlInput.value;
+            if (!url || !url.includes('youtube.com') && !url.includes('youtu.be')) {
+                videoInfoContainer.innerHTML = `<p class="text-red-500">Please enter a valid YouTube video URL.</p>`;
+                return;
+            }
+
+            videoInfoContainer.innerHTML = '<p>Fetching video info...</p>';
+
+            try {
+                const oembedUrl = `https://noembed.com/embed?url=${encodeURIComponent(url)}`;
+                const response = await fetch(oembedUrl);
+                const data = await response.json();
+
+                if (data.error) {
+                    videoInfoContainer.innerHTML = `<p class="text-red-500">Error: ${data.error}</p>`;
+                } else {
+                    const infoHtml = `
+                        <h2 class="text-2xl font-bold mb-4">${data.title}</h2>
+                        <img src="${data.thumbnail_url}" alt="${data.title}" class="w-full max-w-md mx-auto rounded-lg mb-4">
+                        <p><b>Author:</b> ${data.author_name}</p>
+                    `;
+                    videoInfoContainer.innerHTML = infoHtml;
+                }
+            } catch (error) {
+                videoInfoContainer.innerHTML = `<p class="text-red-500">An error occurred. Please try again later.</p>`;
+                console.error(error);
+            }
+        });
+    </script>
+</body>
+</html>
