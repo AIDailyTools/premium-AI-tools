@@ -1,0 +1,67 @@
+<nav class="sticky top-0 bg-black/80 backdrop-blur-sm z-50">
+    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-8">
+            <a href="index.html" class="text-2xl font-bold flex items-center logo-3d">
+                <i class="fas fa-tools mr-2"></i> Mr.FreeTools
+            </a>
+            <div id="nav-links" class="hidden md:flex items-center space-x-6">
+                <a href="index.html" class="hover:text-blue-400">Home</a>
+                <div class="group relative">
+                    <button class="px-4 py-2 hover:text-blue-400">
+                        Tools <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="absolute hidden group-hover:block bg-white dark:bg-gray-800 shadow-xl p-4 w-64 top-full left-0">
+                        <div class="grid grid-cols-1 gap-2">
+                            <a href="video-downloader.html" class="p-3 hover:bg-gray-100 dark:hover:bg-gray-700 rounded flex items-center">
+                                <i class="fas fa-download text-blue-500 mr-2"></i> Video Downloader
+                            </a>
+                            <a href="unit-converter.html" class="p-3 hover:bg-gray-100 dark:hover:bg-gray-700 rounded flex items-center">
+                                <i class="fas fa-exchange-alt text-green-500 mr-2"></i> Unit Converter
+                            </a>
+                            <a href="gst-calculator.html" class="p-3 hover:bg-gray-100 dark:hover:bg-gray-700 rounded flex items-center">
+                                <i class="fas fa-calculator text-purple-500 mr-2"></i> GST Calculator
+                            </a>
+                            <a href="sales-tax-calculator.html" class="p-3 hover:bg-gray-100 dark:hover:bg-gray-700 rounded flex items-center">
+                                <i class="fas fa-percentage text-red-500 mr-2"></i> Sales Tax Calculator
+                            </a>
+                            <a href="saas-pricing-calculator.html" class="p-3 hover:bg-gray-100 dark:hover:bg-gray-700 rounded flex items-center">
+                                <i class="fas fa-chart-line text-yellow-500 mr-2"></i> SaaS Pricing Calculator
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <a href="about.html" class="hover:text-blue-400">About</a>
+                <a href="contact.html" class="hover:text-blue-400">Contact</a>
+                <a href="blog.html" class="hover:text-blue-400">Blog</a>
+                <a href="legal.html" class="hover:text-blue-400">Legal</a>
+            </div>
+        </div>
+        <div class="theme-switcher">
+            <button id="theme-toggle" class="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">🌓</button>
+        </div>
+    </div>
+</nav>
+
+<script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+
+    themeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'dark');
+            themeToggle.textContent = '☀️';
+        } else {
+            localStorage.setItem('theme', 'light');
+            themeToggle.textContent = '🌙';
+        }
+    });
+
+    // Initialize theme
+    if (localStorage.getItem('theme') === 'dark') {
+        body.classList.add('dark-mode');
+        themeToggle.textContent = '☀️';
+    } else {
+        themeToggle.textContent = '🌙';
+    }
+</script>

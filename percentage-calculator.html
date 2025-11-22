@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Percentage Calculator - Trae Tools</title>
+    <meta name="description" content="A versatile and free online percentage calculator. Easily calculate percentages, percentage changes, and more.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-2 logo-3d">Percentage Calculator</h1>
+        <p class="text-center text-gray-400 mb-8">A versatile and free online percentage calculator. Easily calculate percentages, percentage changes, and more.</p>
+        <div class="bg-white/10 p-8 rounded-xl">
+            <div class="max-w-4xl mx-auto">
+                <!-- Calculation Mode 1 -->
+                <div class="bg-white/10 p-6 rounded-xl mb-6">
+                    <h3 class="text-xl font-bold mb-4">What is [P]% of [N]?</h3>
+                    <div class="flex items-center gap-4">
+                        <input type="number" id="p1" placeholder="P" class="w-full p-2 rounded bg-white/10">
+                        <span class="text-xl">% of</span>
+                        <input type="number" id="n1" placeholder="N" class="w-full p-2 rounded bg-white/10">
+                        <button id="calc1" class="px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-700">Calculate</button>
+                    </div>
+                    <p class="mt-4">Result: <span id="res1" class="font-bold"></span></p>
+                </div>
+
+                <!-- Calculation Mode 2 -->
+                <div class="bg-white/10 p-6 rounded-xl mb-6">
+                    <h3 class="text-xl font-bold mb-4">[N1] is what percent of [N2]?</h3>
+                    <div class="flex items-center gap-4">
+                        <input type="number" id="n2_1" placeholder="N1" class="w-full p-2 rounded bg-white/10">
+                        <span class="text-xl">is what % of</span>
+                        <input type="number" id="n2_2" placeholder="N2" class="w-full p-2 rounded bg-white/10">
+                        <button id="calc2" class="px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-700">Calculate</button>
+                    </div>
+                    <p class="mt-4">Result: <span id="res2" class="font-bold"></span></p>
+                </div>
+
+                <!-- Calculation Mode 3 -->
+                <div class="bg-white/10 p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4">What is the percentage increase/decrease from [N1] to [N2]?</h3>
+                    <div class="flex items-center gap-4">
+                        <span class="text-xl">From</span>
+                        <input type="number" id="n3_1" placeholder="N1" class="w-full p-2 rounded bg-white/10">
+                        <span class="text-xl">to</span>
+                        <input type="number" id="n3_2" placeholder="N2" class="w-full p-2 rounded bg-white/10">
+                        <button id="calc3" class="px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-700">Calculate</button>
+                    </div>
+                    <p class="mt-4">Result: <span id="res3" class="font-bold"></span></p>
+                </div>
+            </div>
+            <!-- Ad Space -->
+            <div class="mt-8 bg-black/20 p-4 text-center">
+                AD SPACE - In-Tool Ad
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+    <script src="components.js"></script>
+    <script>
+        // Calculator 1
+        const p1 = document.getElementById('p1');
+        const n1 = document.getElementById('n1');
+        const calc1 = document.getElementById('calc1');
+        const res1 = document.getElementById('res1');
+
+        calc1.addEventListener('click', () => {
+            const result = (p1.value / 100) * n1.value;
+            res1.textContent = result;
+        });
+
+        // Calculator 2
+        const n2_1 = document.getElementById('n2_1');
+        const n2_2 = document.getElementById('n2_2');
+        const calc2 = document.getElementById('calc2');
+        const res2 = document.getElementById('res2');
+
+        calc2.addEventListener('click', () => {
+            const result = (n2_1.value / n2_2.value) * 100;
+            res2.textContent = result.toFixed(2) + '%';
+        });
+
+        // Calculator 3
+        const n3_1 = document.getElementById('n3_1');
+        const n3_2 = document.getElementById('n3_2');
+        const calc3 = document.getElementById('calc3');
+        const res3 = document.getElementById('res3');
+
+        calc3.addEventListener('click', () => {
+            const diff = n3_2.value - n3_1.value;
+            const result = (diff / n3_1.value) * 100;
+            const change = result > 0 ? 'increase' : 'decrease';
+            res3.textContent = `${Math.abs(result).toFixed(2)}% ${change}`;
+        });
+    </script>
+</body>
+</html>

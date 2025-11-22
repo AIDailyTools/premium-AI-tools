@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Calculator - Trae Tools</title>
+    <meta name="description" content="Calculate your loan payments, total interest, and see a full amortization schedule with our free and easy-to-use loan calculator.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- AdSense Placeholder -->
+    <div class="adsense-placeholder-top">
+        <!-- Google AdSense code goes here -->
+    </div>
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-4 logo-3d">Loan Calculator</h1>
+        <p class="text-gray-400 mb-8">Our enhanced loan calculator now provides a visual breakdown of your loan, including a pie chart that shows the proportion of principal and interest. Simply enter your loan amount, interest rate, and term to see a comprehensive analysis of your payments.</p>
+        <div class="bg-white/10 p-8 rounded-xl shadow-lg">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <div class="mb-4">
+                        <label for="loan-amount" class="block mb-2 font-bold">Loan Amount ($)</label>
+                        <input type="number" id="loan-amount" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white" value="10000">
+                    </div>
+                    <div class="mb-4">
+                        <label for="interest-rate" class="block mb-2 font-bold">Annual Interest Rate (%)</label>
+                        <input type="number" id="interest-rate" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white" value="5">
+                    </div>
+                    <div class="mb-4">
+                        <label for="loan-term" class="block mb-2 font-bold">Loan Term (Years)</label>
+                        <input type="number" id="loan-term" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white" value="5">
+                    </div>
+                    <div class="flex space-x-2">
+                        <button id="calculate-btn" class="button-3d w-full">Calculate</button>
+                        <button id="help-btn" class="button-3d bg-gray-600 hover:bg-gray-700 w-full">Show Help</button>
+                    </div>
+                </div>
+                <div id="results" class="bg-black/30 p-6 rounded-lg">
+                    <h2 class="text-2xl font-bold mb-4">Results</h2>
+                    <canvas id="loanChart" class="mb-4 max-h-64"></canvas>
+                    <div id="monthly-payment" class="mb-2 text-lg"></div>
+                    <div id="total-interest" class="mb-2 text-lg"></div>
+                    <div id="total-payment" class="text-lg"></div>
+                </div>
+            </div>
+            <div id="amortization-schedule" class="mt-8">
+                <!-- AdSense Placeholder -->
+                <div class="adsense-placeholder-card my-4">
+                    <!-- Google AdSense code goes here -->
+                </div>
+                <h2 class="text-2xl font-bold mb-4">Amortization Schedule</h2>
+                <div class="bg-black/20 p-6 rounded-lg max-h-96 overflow-y-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr>
+                                <th class="p-2">Month</th>
+                                <th class="p-2">Payment</th>
+                                <th class="p-2">Principal</th>
+                                <th class="p-2">Interest</th>
+                                <th class="p-2">Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="schedule-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Ad Space -->
+            
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+
+    <!-- Modal -->
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 class="text-2xl font-bold mb-4">Loan Calculator Help</h2>
+            <p class="mb-2">This tool helps you understand your loan payments.</p>
+            <ul class="list-disc list-inside">
+                <li><b>Loan Amount:</b> The total amount of money you are borrowing.</li>
+                <li><b>Annual Interest Rate:</b> The yearly interest rate for the loan.</li>
+                <li><b>Loan Term:</b> The number of years you have to repay the loan.</li>
+                <li><b>Calculate:</b> Click this to see the results.</li>
+                <li><b>Results:</b> Shows your monthly payment, total interest paid, and total amount paid over the life of the loan.</li>
+                <li><b>Chart:</b> The pie chart visualizes the principal vs. interest.</li>
+                <li><b>Amortization Schedule:</b> A detailed table showing each payment over the loan term.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="components.js"></script>
+    <script>
+        const calculateBtn = document.getElementById('calculate-btn');
+        const helpBtn = document.getElementById('help-btn');
+        const modal = document.getElementById('help-modal');
+        const closeBtn = document.querySelector('.close-button');
+        let loanChart;
+
+        function updateChart(principal, interest) {
+            const ctx = document.getElementById('loanChart').getContext('2d');
+            if (loanChart) {
+                loanChart.destroy();
+            }
+            loanChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Principal Amount', 'Total Interest'],
+                    datasets: [{
+                        data: [principal, interest],
+                        backgroundColor: ['#4CAF50', '#F44336'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: 'white'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Loan Breakdown',
+                            color: 'white'
+                        }
+                    }
+                }
+            });
+        }
+
+        function calculateLoan() {
+            const loanAmount = parseFloat(document.getElementById('loan-amount').value);
+            const interestRate = parseFloat(document.getElementById('interest-rate').value);
+            const loanTerm = parseFloat(document.getElementById('loan-term').value);
+
+            const monthlyInterestRate = (interestRate / 100) / 12;
+            const numberOfPayments = loanTerm * 12;
+
+            const monthlyPayment = (loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -numberOfPayments));
+            const totalPayment = monthlyPayment * numberOfPayments;
+            const totalInterest = totalPayment - loanAmount;
+
+            document.getElementById('monthly-payment').innerHTML = `<strong>Monthly Payment:</strong> $${monthlyPayment.toFixed(2)}`;
+            document.getElementById('total-interest').innerHTML = `<strong>Total Interest:</strong> $${totalInterest.toFixed(2)}`;
+            document.getElementById('total-payment').innerHTML = `<strong>Total Payment:</strong> $${totalPayment.toFixed(2)}`;
+
+            updateChart(loanAmount, totalInterest);
+
+            // Generate Amortization Schedule
+            const scheduleBody = document.getElementById('schedule-body');
+            scheduleBody.innerHTML = '';
+            let balance = loanAmount;
+
+            for (let i = 1; i <= numberOfPayments; i++) {
+                const interestPayment = balance * monthlyInterestRate;
+                const principalPayment = monthlyPayment - interestPayment;
+                balance -= principalPayment;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="p-2">${i}</td>
+                    <td class="p-2">$${monthlyPayment.toFixed(2)}</td>
+                    <td class="p-2">$${principalPayment.toFixed(2)}</td>
+                    <td class="p-2">$${interestPayment.toFixed(2)}</td>
+                    <td class="p-2">$${balance.toFixed(2)}</td>
+                `;
+                scheduleBody.appendChild(row);
+            }
+        }
+
+        calculateBtn.addEventListener('click', calculateLoan);
+
+        helpBtn.addEventListener('click', () => {
+            modal.style.display = 'block';
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Initial calculation
+        calculateLoan();
+    </script>
+</body>
+</html>

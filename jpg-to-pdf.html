@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convert JPG to PDF - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+      window.addEventListener('load', () => {
+        console.log('jsPDF version:', window.jspdf.version);
+      });
+    </script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Convert JPG to PDF</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your JPG images to combine them into a single PDF file.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex flex-col items-center justify-center w-full gap-4">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <button type="button" class="button-3d px-8 py-3">
+                        <i class="fas fa-upload mr-2"></i>Select Files
+                    </button>
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">JPG, JPEG (MAX. 2MB)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropzone = document.getElementById('dropzone-file');
+            const fileInput = document.getElementById('dropzone-file');
+
+            fileInput.addEventListener('change', handleFiles);
+
+            function handleFiles(event) {
+                const files = event.target.files;
+                console.log('Files selected:', files.length);
+                if (files.length === 0) return;
+
+                const images = [];
+                let filesProcessed = 0;
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if (!file.type.startsWith('image/')) {
+                        alert('Please upload only image files.');
+                        continue;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onerror = (e) => {
+                        console.error('File reading error:', e.target.error);
+                    };
+                    reader.onload = (e) => {
+                        console.log('Image loaded:', file.name);
+                        images.push(e.target.result);
+                        filesProcessed++;
+                        if (filesProcessed === files.length) {
+                            convertImagesToPdf(images);
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            function convertImagesToPdf(images) {
+                console.log('Starting PDF conversion with', images.length, 'images');
+                const doc = new window.jspdf.jsPDF();
+                console.log('jsPDF initialized:', !!doc);
+                let imagesProcessed = 0;
+
+                function processImage(index) {
+                    if (index >= images.length) {
+                        console.log('PDF conversion complete, saving file');
+                        doc.save('converted.pdf');
+                        return;
+                    }
+
+                    const img = new Image();
+                    img.onerror = () => {
+                        console.error('Error loading image:', file.name);
+                        alert('Failed to load image: ' + file.name);
+                    };
+                    img.onload = () => {
+                        console.log('Adding image', index + 1, 'to PDF');
+                        if (index > 0) {
+                            doc.addPage();
+                        }
+                        const imgWidth = doc.internal.pageSize.getWidth();
+                        const imgHeight = (img.height * imgWidth) / img.width;
+                        try {
+                        doc.addImage(images[index], 'JPEG', 0, 0, imgWidth, imgHeight);
+                        console.log('Image added successfully');
+                    } catch (e) {
+                        console.error('Error adding image:', e);
+                        alert('Error processing image: ' + e.message);
+                        return;
+                    }
+                        processImage(index + 1);
+                    };
+                    img.onerror = (e) => {
+                        console.error('Image loading failed:', e);
+                        processImage(index + 1);
+                    };
+                    img.src = images[index];
+                }
+
+                processImage(0);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convert PDF to Word - Trae Tools</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white text-center mb-12">Convert PDF to Word</h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 text-center mb-16">Upload your PDF file to convert it into an editable Word document.</p>
+
+        <div class="max-w-2xl mx-auto bg-white/10 p-8 rounded-2xl">
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-white/5 border-gray-600 hover:border-gray-500 hover:bg-white/10">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                        <p class="mb-2 text-sm text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-400">PDF (MAX. 800x400px)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" />
+                </label>
+            </div> 
+        </div>
+    </main>
+
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+</body>
+</html>

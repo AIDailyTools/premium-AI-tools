@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Pricing Calculator - Trae Tools</title>
+    <meta name="description" content="Calculate SaaS pricing for different plans and user counts. Compare pricing models and estimate costs.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-4 logo-3d">SaaS Pricing Calculator</h1>
+        <p class="text-gray-400 mb-8">Calculate and compare SaaS pricing for different plans and user counts.</p>
+        
+        <div class="bg-white/10 p-8 rounded-xl shadow-lg max-w-4xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Input Section -->
+                <div class="space-y-6">
+                    <div>
+                        <label class="block mb-2 font-bold">Pricing Plan</label>
+                        <select id="plan-select" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none text-white">
+                            <option value="basic">Basic Plan</option>
+                            <option value="professional" selected>Professional Plan</option>
+                            <option value="enterprise">Enterprise Plan</option>
+                            <option value="custom">Custom Plan</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 font-bold">Number of Users</label>
+                        <input type="number" id="user-count" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none text-white" placeholder="Enter number of users" value="10" min="1">
+                    </div>
+
+                    <div id="custom-price-section" class="hidden">
+                        <label class="block mb-2 font-bold">Price per User ($)</label>
+                        <input type="number" id="custom-price" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none text-white" placeholder="Enter price per user" value="25" step="0.01">
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 font-bold">Billing Cycle</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center">
+                                <input type="radio" name="billing" value="monthly" checked class="mr-2">
+                                <span>Monthly</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="billing" value="annual" class="mr-2">
+                                <span>Annual (10% discount)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 font-bold">Additional Features</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="premium-support" class="mr-2">
+                                <span>Premium Support (+$5/user/month)</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="advanced-analytics" class="mr-2">
+                                <span>Advanced Analytics (+$3/user/month)</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="api-access" class="mr-2">
+                                <span>API Access (+$2/user/month)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button id="calculate-btn" class="w-full button-3d">Calculate Pricing</button>
+                </div>
+
+                <!-- Results Section -->
+                <div class="bg-black/30 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">Pricing Breakdown</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <span>Plan:</span>
+                            <span id="selected-plan" class="font-bold">Professional</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Users:</span>
+                            <span id="user-display" class="font-bold">10</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Base Price per User:</span>
+                            <span id="base-price" class="font-bold">$25.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Additional Features:</span>
+                            <span id="addon-price" class="font-bold">$0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Subtotal (Monthly):</span>
+                            <span id="monthly-subtotal" class="font-bold">$250.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Annual Discount:</span>
+                            <span id="discount-amount" class="font-bold text-green-400">$0.00</span>
+                        </div>
+                        <div class="border-t border-gray-600 pt-2">
+                            <div class="flex justify-between">
+                                <span class="font-bold">Monthly Total:</span>
+                                <span id="monthly-total" class="font-bold text-lg text-accent">$250.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-bold">Annual Total:</span>
+                                <span id="annual-total" class="font-bold text-lg">$3,000.00</span>
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-400 mt-4">
+                            <p>💡 <strong>Tip:</strong> Annual billing saves you <span id="annual-savings" class="text-green-400 font-bold">$0.00</span> per year!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Plan Comparison -->
+            <div class="mt-8">
+                <h3 class="text-2xl font-bold mb-4">Plan Comparison</h3>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-white/10 p-4 rounded-lg">
+                        <h4 class="font-bold text-lg mb-2">Basic Plan</h4>
+                        <p class="text-2xl font-bold text-accent mb-2">$15/user/month</p>
+                        <ul class="text-sm space-y-1">
+                            <li>✓ Core features</li>
+                            <li>✓ Email support</li>
+                            <li>✓ Basic reporting</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded-lg border-2 border-accent">
+                        <h4 class="font-bold text-lg mb-2">Professional Plan</h4>
+                        <p class="text-2xl font-bold text-accent mb-2">$25/user/month</p>
+                        <ul class="text-sm space-y-1">
+                            <li>✓ All Basic features</li>
+                            <li>✓ Priority support</li>
+                            <li>✓ Advanced reporting</li>
+                            <li>✓ Integrations</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded-lg">
+                        <h4 class="font-bold text-lg mb-2">Enterprise Plan</h4>
+                        <p class="text-2xl font-bold text-accent mb-2">$45/user/month</p>
+                        <ul class="text-sm space-y-1">
+                            <li>✓ All Professional features</li>
+                            <li>✓ Dedicated support</li>
+                            <li>✓ Custom integrations</li>
+                            <li>✓ SSO & security</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script>
+        const planPrices = {
+            basic: 15,
+            professional: 25,
+            enterprise: 45,
+            custom: 25
+        };
+
+        function calculatePricing() {
+            const selectedPlan = document.getElementById('plan-select').value;
+            const userCount = parseInt(document.getElementById('user-count').value) || 1;
+            const billing = document.querySelector('input[name="billing"]:checked').value;
+            const customPrice = parseFloat(document.getElementById('custom-price').value) || 25;
+            
+            // Get base price
+            let basePrice = selectedPlan === 'custom' ? customPrice : planPrices[selectedPlan];
+            
+            // Calculate addon costs
+            let addonCost = 0;
+            if (document.getElementById('premium-support').checked) addonCost += 5;
+            if (document.getElementById('advanced-analytics').checked) addonCost += 3;
+            if (document.getElementById('api-access').checked) addonCost += 2;
+            
+            // Calculate totals
+            const monthlySubtotal = (basePrice + addonCost) * userCount;
+            const annualSubtotal = monthlySubtotal * 12;
+            const discount = billing === 'annual' ? annualSubtotal * 0.1 : 0;
+            const monthlyTotal = billing === 'annual' ? (annualSubtotal - discount) / 12 : monthlySubtotal;
+            const annualTotal = billing === 'annual' ? annualSubtotal - discount : monthlySubtotal * 12;
+            
+            // Update display
+            document.getElementById('selected-plan').textContent = selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1);
+            document.getElementById('user-display').textContent = userCount;
+            document.getElementById('base-price').textContent = `$${basePrice.toFixed(2)}`;
+            document.getElementById('addon-price').textContent = `$${addonCost.toFixed(2)}`;
+            document.getElementById('monthly-subtotal').textContent = `$${monthlySubtotal.toFixed(2)}`;
+            document.getElementById('discount-amount').textContent = billing === 'annual' ? `-$${discount.toFixed(2)}` : '$0.00';
+            document.getElementById('monthly-total').textContent = `$${monthlyTotal.toFixed(2)}`;
+            document.getElementById('annual-total').textContent = `$${annualTotal.toFixed(2)}`;
+            document.getElementById('annual-savings').textContent = `$${discount.toFixed(2)}`;
+        }
+        
+        function toggleCustomPrice() {
+            const planSelect = document.getElementById('plan-select');
+            const customSection = document.getElementById('custom-price-section');
+            
+            if (planSelect.value === 'custom') {
+                customSection.classList.remove('hidden');
+            } else {
+                customSection.classList.add('hidden');
+            }
+        }
+        
+        // Event listeners
+        document.getElementById('calculate-btn').addEventListener('click', calculatePricing);
+        document.getElementById('user-count').addEventListener('input', calculatePricing);
+        document.getElementById('plan-select').addEventListener('change', () => {
+            toggleCustomPrice();
+            calculatePricing();
+        });
+        document.getElementById('custom-price').addEventListener('input', calculatePricing);
+        document.querySelectorAll('input[name="billing"]').forEach(radio => {
+            radio.addEventListener('change', calculatePricing);
+        });
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', calculatePricing);
+        });
+        
+        // Initial calculation
+        calculatePricing();
+    </script>
+</body>
+</html>

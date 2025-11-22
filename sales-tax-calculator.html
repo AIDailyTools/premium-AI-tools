@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Tax Calculator - Trae Tools</title>
+    <meta name="description" content="Calculate sales tax for different US states. Easy-to-use sales tax calculator with state-specific rates.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-4 logo-3d">Sales Tax Calculator</h1>
+        <p class="text-gray-400 mb-8">Calculate sales tax for different US states with accurate state-specific rates.</p>
+        
+        <div class="bg-white/10 p-8 rounded-xl shadow-lg max-w-2xl mx-auto">
+            <div class="space-y-6">
+                <!-- State Selection -->
+                <div>
+                    <label class="block mb-2 font-bold">Select State</label>
+                    <select id="state-select" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none text-white">
+                        <option value="0">No Tax</option>
+                        <option value="4">Alabama (4%)</option>
+                        <option value="0">Alaska (0%)</option>
+                        <option value="5.6">Arizona (5.6%)</option>
+                        <option value="6.5">Arkansas (6.5%)</option>
+                        <option value="7.25" selected>California (7.25%)</option>
+                        <option value="2.9">Colorado (2.9%)</option>
+                        <option value="6.35">Connecticut (6.35%)</option>
+                        <option value="0">Delaware (0%)</option>
+                        <option value="6">Florida (6%)</option>
+                        <option value="4">Georgia (4%)</option>
+                        <option value="4.166">Hawaii (4.166%)</option>
+                        <option value="6">Idaho (6%)</option>
+                        <option value="6.25">Illinois (6.25%)</option>
+                        <option value="7">Indiana (7%)</option>
+                        <option value="6">Iowa (6%)</option>
+                        <option value="6.5">Kansas (6.5%)</option>
+                        <option value="6">Kentucky (6%)</option>
+                        <option value="4.45">Louisiana (4.45%)</option>
+                        <option value="5.5">Maine (5.5%)</option>
+                        <option value="6">Maryland (6%)</option>
+                        <option value="6.25">Massachusetts (6.25%)</option>
+                        <option value="6">Michigan (6%)</option>
+                        <option value="6.875">Minnesota (6.875%)</option>
+                        <option value="7">Mississippi (7%)</option>
+                        <option value="4.225">Missouri (4.225%)</option>
+                        <option value="0">Montana (0%)</option>
+                        <option value="5.5">Nebraska (5.5%)</option>
+                        <option value="6.85">Nevada (6.85%)</option>
+                        <option value="0">New Hampshire (0%)</option>
+                        <option value="6.625">New Jersey (6.625%)</option>
+                        <option value="5.125">New Mexico (5.125%)</option>
+                        <option value="8">New York (8%)</option>
+                        <option value="4.75">North Carolina (4.75%)</option>
+                        <option value="5">North Dakota (5%)</option>
+                        <option value="5.75">Ohio (5.75%)</option>
+                        <option value="4.5">Oklahoma (4.5%)</option>
+                        <option value="0">Oregon (0%)</option>
+                        <option value="6">Pennsylvania (6%)</option>
+                        <option value="7">Rhode Island (7%)</option>
+                        <option value="6">South Carolina (6%)</option>
+                        <option value="4.5">South Dakota (4.5%)</option>
+                        <option value="7">Tennessee (7%)</option>
+                        <option value="6.25">Texas (6.25%)</option>
+                        <option value="5.95">Utah (5.95%)</option>
+                        <option value="6">Vermont (6%)</option>
+                        <option value="5.3">Virginia (5.3%)</option>
+                        <option value="6.5">Washington (6.5%)</option>
+                        <option value="6">West Virginia (6%)</option>
+                        <option value="5">Wisconsin (5%)</option>
+                        <option value="4">Wyoming (4%)</option>
+                    </select>
+                </div>
+
+                <!-- Amount Input -->
+                <div>
+                    <label class="block mb-2 font-bold">Purchase Amount ($)</label>
+                    <input type="number" id="amount" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none text-white" placeholder="Enter purchase amount" value="100" step="0.01">
+                </div>
+
+                <!-- Calculation Type -->
+                <div>
+                    <label class="block mb-2 font-bold">Calculation Type</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center">
+                            <input type="radio" name="calc-type" value="add" checked class="mr-2">
+                            <span>Add Tax (Pre-tax amount)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="calc-type" value="remove" class="mr-2">
+                            <span>Remove Tax (Total amount)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Calculate Button -->
+                <button id="calculate-btn" class="w-full button-3d">Calculate Sales Tax</button>
+
+                <!-- Results -->
+                <div id="results" class="bg-black/30 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">Results</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span>Pre-tax Amount:</span>
+                            <span id="pretax-amount" class="font-bold">$100.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Sales Tax:</span>
+                            <span id="tax-amount" class="font-bold text-accent">$7.25</span>
+                        </div>
+                        <div class="flex justify-between border-t border-gray-600 pt-2">
+                            <span class="font-bold">Total Amount:</span>
+                            <span id="total-amount" class="font-bold text-lg">$107.25</span>
+                        </div>
+                        <div class="text-sm text-gray-400 mt-2">
+                            <span>Tax Rate: </span>
+                            <span id="tax-rate">7.25%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script>
+        function calculateSalesTax() {
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            const taxRate = parseFloat(document.getElementById('state-select').value);
+            const calcType = document.querySelector('input[name="calc-type"]:checked').value;
+            
+            let pretaxAmount, taxAmount, totalAmount;
+            
+            if (calcType === 'add') {
+                // Add tax to amount
+                pretaxAmount = amount;
+                taxAmount = (amount * taxRate) / 100;
+                totalAmount = amount + taxAmount;
+            } else {
+                // Remove tax from amount
+                totalAmount = amount;
+                pretaxAmount = amount / (1 + taxRate / 100);
+                taxAmount = amount - pretaxAmount;
+            }
+            
+            // Update results
+            document.getElementById('pretax-amount').textContent = `$${pretaxAmount.toFixed(2)}`;
+            document.getElementById('tax-amount').textContent = `$${taxAmount.toFixed(2)}`;
+            document.getElementById('total-amount').textContent = `$${totalAmount.toFixed(2)}`;
+            document.getElementById('tax-rate').textContent = `${taxRate}%`;
+        }
+        
+        // Event listeners
+        document.getElementById('calculate-btn').addEventListener('click', calculateSalesTax);
+        document.getElementById('amount').addEventListener('input', calculateSalesTax);
+        document.getElementById('state-select').addEventListener('change', calculateSalesTax);
+        document.querySelectorAll('input[name="calc-type"]').forEach(radio => {
+            radio.addEventListener('change', calculateSalesTax);
+        });
+        
+        // Initial calculation
+        calculateSalesTax();
+    </script>
+</body>
+</html>

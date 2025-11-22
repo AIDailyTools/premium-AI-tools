@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Trae Tools</title>
+    <meta name="description" content="Read our blog for tips, tutorials, and updates on our free online tools.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="components.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <div id="nav-placeholder"></div>
+
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center mb-8">Our Blog</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="blog-posts">
+            <!-- Blog posts will be dynamically inserted here -->
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script>
+        // Fetch and display blog posts
+        const posts = [
+            {
+                title: "Introducing the YouTube Video Info Fetcher",
+                link: "posts/youtube-info-fetcher-guide.html",
+                date: "October 27, 2023",
+                excerpt: "Learn about our new tool that lets you quickly fetch details for any YouTube video, including title, thumbnail, and author..."
+            },
+            {
+                title: "Unlock Your Data: Introducing the New PDF to Excel Converter",
+                link: "posts/pdf-to-excel-guide.html",
+                date: "October 27, 2023",
+                excerpt: "Learn how to use our new free online tool to accurately convert tables from PDF files into editable Excel spreadsheets..."
+            },
+            {
+                title: "10 Tips for Using Our Image Editor Like a Pro",
+                link: "posts/image-editor-tips.html",
+                date: "October 26, 2023",
+                excerpt: "Unlock the full potential of our image editor with these expert tips and tricks..."
+            },
+            {
+                title: "How to Create a Professional Invoice in Minutes",
+                link: "posts/invoice-generator-guide.html",
+                date: "October 25, 2023",
+                excerpt: "A step-by-step guide to creating and downloading professional invoices using our free tool..."
+            }
+        ];
+
+        const blogPostsContainer = document.getElementById('blog-posts');
+
+        posts.forEach(post => {
+            const postElement = document.createElement('div');
+            postElement.classList.add('bg-white', 'p-6', 'rounded-lg', 'shadow-md');
+            postElement.innerHTML = `
+                <h2 class="text-2xl font-bold mb-2"><a href="${post.link}" class="text-blue-600 hover:underline">${post.title}</a></h2>
+                <p class="text-gray-500 text-sm mb-4">${post.date}</p>
+                <p class="text-gray-700">${post.excerpt}</p>
+                <a href="${post.link}" class="text-blue-600 hover:underline mt-4 inline-block">Read More &rarr;</a>
+            `;
+            blogPostsContainer.appendChild(postElement);
+        });
+    </script>
+
+</body>
+</html>

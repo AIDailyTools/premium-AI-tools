@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A comprehensive suite of free online tools for developers, designers, students, and professionals.">
+    <title>Trae Tools - Your Ultimate Online Toolkit</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#0d1117">
+    <meta name="google-site-verification" content="your_verification_code">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 font-sans">
+    <!-- AdSense Placeholder -->
+    <div class="adsense-placeholder-top">
+        <!-- Google AdSense code goes here -->
+    </div>
+    <div id="main-nav"></div>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="container" style="text-align:center; padding:4rem 1rem; background-color:#e0e7ff; border-radius:12px; margin-top:1rem;">
+    <h1 style="font-size:2.5rem; color:#1e40af; margin-bottom:1rem;">Welcome to Premium AI Tools</h1>
+    <p style="font-size:1.25rem; color:#374151; max-width:600px; margin:0 auto 2rem;">Your one-stop platform for powerful AI utilities designed to boost your productivity and creativity.</p>
+    <input type="search" id="searchInput" placeholder="Search tools..." style="width:100%; max-width:400px; padding:0.5rem 1rem; border-radius:8px; border:1px solid #ccc; margin-bottom:1.5rem; font-size:1rem;">
+    <a href="#all-tools" style="display:inline-block; background-color:#2563eb; color:white; padding:0.75rem 1.5rem; border-radius:8px; font-weight:600; text-decoration:none; transition:background-color 0.3s ease;">Explore Tools</a>
+</section>
+
+        <!-- Main Categories -->
+        <section class="container mx-auto px-4 py-16">
+            <h2 class="text-4xl font-bold text-center mb-12">Our Main Categories</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 p-6">
+                <!-- Functional Categories -->
+                <a href="loan-calculator.html" class="category-card bg-white/5 p-8 rounded-2xl hover:bg-white/10 transition-all duration-300 hover:-translate-y-2">
+                    <div class="inline-flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-blue-600 to-blue-400 rounded-xl">
+                        <i class="fas fa-calculator text-2xl text-white"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">Financial Tools</h3>
+                    <p class="text-sm text-gray-400">Loan calculators, EMI converters, and financial planners</p>
+                </a>
+                
+                <a href="pdf-tools.html" class="category-card bg-white/5 p-8 rounded-2xl hover:bg-white/10 transition-all duration-300 hover:-translate-y-2">
+                    <div class="inline-flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-blue-600 to-blue-400 rounded-xl">
+                        <i class="fas fa-file-pdf text-2xl text-white"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">PDF Tools</h3>
+                    <p class="text-sm text-gray-400">Merge, split, and convert PDF documents</p>
+                </a>
+                <div class="category-card bg-white/5 p-6 rounded-2xl hover:bg-white/10 transition-all duration-300">
+                    <i class="fas fa-video text-4xl text-blue-400 mb-4 logo-3d"></i>
+                    <h3 class="font-semibold text-lg">Video</h3>
+                </div>
+                <div class="category-card bg-white/5 p-6 rounded-2xl hover:bg-white/10 transition-all duration-300">
+                    <i class="fas fa-graduation-cap text-4xl text-blue-400 mb-4 logo-3d"></i>
+                    <h3 class="font-semibold text-lg">Student</h3>
+                </div>
+                <div class="category-card bg-white/5 p-6 rounded-2xl hover:bg-white/10 transition-all duration-300">
+                    <i class="fas fa-code text-4xl text-blue-400 mb-4 logo-3d"></i>
+                    <h3 class="font-semibold text-lg">Developer</h3>
+                </div>
+                <div class="category-card bg-white/5 p-6 rounded-2xl hover:bg-white/10 transition-all duration-300">
+                    <i class="fas fa-pencil-ruler text-4xl text-blue-400 mb-4 logo-3d"></i>
+                    <h3 class="font-semibold text-lg">Design</h3>
+                </div>
+                <div class="category-card bg-white/5 p-6 rounded-2xl hover:bg-white/10 transition-all duration-300">
+                    <i class="fas fa-file-alt text-4xl text-blue-400 mb-4 logo-3d"></i>
+                    <h3 class="font-semibold text-lg">Content</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Tools Section -->
+        <section class="py-16 bg-gray-50 dark:bg-gray-800">
+          <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">Most Popular Tools</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+              <div class="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                <div class="flex items-center gap-4 mb-4">
+                  <i class="fas fa-download text-3xl text-blue-500"></i>
+                  <h3 class="text-xl font-semibold">Video Downloader</h3>
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 mb-4">Download videos from YouTube and other platforms in multiple formats and resolutions</p>
+                <a href="/video-downloader.html" class="text-blue-500 hover:text-blue-600 font-medium">Use Now →</a>
+              </div>
+
+              <div class="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                <div class="flex items-center gap-4 mb-4">
+                  <i class="fas fa-file-pdf text-3xl text-red-500"></i>
+                  <h3 class="text-xl font-semibold">PDF Toolkit</h3>
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 mb-4">Merge, split, compress and convert PDF files with advanced editing capabilities</p>
+                <a href="/pdf-tools.html" class="text-blue-500 hover:text-blue-600 font-medium">Explore Tools →</a>
+              </div>
+
+              <div class="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                <div class="flex items-center gap-4 mb-4">
+                  <i class="fas fa-image text-3xl text-green-500"></i>
+                  <h3 class="text-xl font-semibold">AI Photo Editor</h3>
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 mb-4">Professional-grade editing with background removal, filters and enhancements</p>
+                <a href="/image-editor.html" class="text-blue-500 hover:text-blue-600 font-medium">Edit Images →</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- All Tools Section -->
+        <main class="container">
+    <section id="all-tools" class="all-tools">
+        <h2 style="text-align:center; margin-top:2rem; font-size:2rem; color:#111827;">All Tools</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+            <!-- Functional Tool Card -->
+            <div class="tool-card bg-white/5 p-6 rounded-xl hover:bg-white/10 transition-all duration-300">
+                <div class="flex items-center justify-center w-full h-32 mb-4 bg-gradient-to-br from-blue-600 to-blue-400 rounded-xl">
+                    <i class="fas fa-calculator text-4xl text-white"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Loan Calculator</h3>
+                <p class="text-sm text-gray-400 mb-4">Calculate EMIs, interest rates, and payment schedules</p>
+                <a href="loan-calculator.html" class="inline-block w-full py-2 text-center text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+                    Open Tool →
+                </a>
+            </div>
+            <a href="pdf-tools.html" class="tool-card" aria-label="PDF Tools" style="background:#fff; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.1); padding:1.5rem; text-align:center; text-decoration:none; color:#111; transition:transform 0.2s ease, box-shadow 0.2s ease; display:flex; flex-direction:column; align-items:center;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="#2563eb" viewBox="0 0 24 24" width="48" height="48" style="margin-bottom:1rem;"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm9 5V3.5L18.5 7H15Z"/></svg>
+                <h3 style="margin:0 0 0.5rem 0; font-size:1.25rem;">PDF Tools</h3>
+                <p style="margin:0; font-size:0.9rem; color:#555;">Various utilities for working with PDF files including conversion and editing.</p>
+            </a>
+            <a href="qr-generator.html" class="tool-card" aria-label="QR Generator" style="background:#fff; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.1); padding:1.5rem; text-align:center; text-decoration:none; color:#111; transition:transform 0.2s ease, box-shadow 0.2s ease; display:flex; flex-direction:column; align-items:center;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="#2563eb" viewBox="0 0 24 24" width="48" height="48" style="margin-bottom:1rem;"><path d="M3 3h4v4H3V3Zm6 0h4v4h-4V3Zm6 0h4v4h-4V3ZM3 9h4v4H3V9Zm6 0h4v4h-4V9Zm6 0h4v4h-4V9ZM3 15h4v4H3v-4Zm6 0h4v4h-4v-4Zm6 0h4v4h-4v-4Z"/></svg>
+                <h3 style="margin:0 0 0.5rem 0; font-size:1.25rem;">QR Generator</h3>
+                <p style="margin:0; font-size:0.9rem; color:#555;">Create QR codes for URLs, text, contact info, and more.</p>
+            </a>
+        </div>
+    </section>
+</main>
+
+<div id="main-footer"></div>
+                <a href="pdf_tools_description.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                    <i class="fas fa-file-pdf text-3xl text-blue-400 logo-3d"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">PDF Tools</h3>
+                        <p class="text-sm text-gray-300">Various utilities for working with PDF files including conversion and editing.</p>
+                    </div>
+                </a>
+                <a href="qr_generator_description.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                    <i class="fas fa-qrcode text-3xl text-blue-400 logo-3d"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">QR Generator</h3>
+                        <p class="text-sm text-gray-300">Create QR codes for URLs, text, contact info, and more.</p>
+                    </div>
+                </a>
+                <!-- Add 16 more placeholder tools -->
+                <a href="image_editor_description.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                    <i class="fas fa-image text-3xl text-blue-400 logo-3d"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">Image Editor</h3>
+                        <p class="text-sm text-gray-300">Edit and enhance your images</p>
+                    </div>
+                </a>
+                <a href="youtube_video_info_description.html" class="tool-card">
+    <h3>YouTube Video Info</h3>
+    <p>Get detailed information about any YouTube video.</p>
+</a>
+                <a href="video_downloader_description.html" class="tool-card">
+    <h3>Video Downloader</h3>
+    <p>Download videos from various platforms quickly and easily.</p>
+</a>
+                <a href="word_counter_description.html" class="tool-card">
+    <h3>Word Counter</h3>
+    <p>Count words, characters, sentences, and paragraphs in your text.</p>
+</a>
+                <a href="color_picker_description.html" class="tool-card">
+    <h3>Color Picker</h3>
+    <p>Select colors from an intuitive palette and get their HEX, RGB, and HSL values.</p>
+</a>
+                <a href="case_converter_description.html" class="tool-card">
+    <h3>Case Converter</h3>
+    <p>Convert text between different cases like uppercase, lowercase, and title case.</p>
+</a>
+                <a href="url_shortener_description.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                    <i class="fas fa-link text-3xl text-blue-400 logo-3d"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">URL Shortener</h3>
+                        <p class="text-sm text-gray-300">Shorten long URLs into concise, shareable links.</p>
+                    </div>
+                </a>
+                <a href="lorem_ipsum_generator_description.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                    <i class="fas fa-file-signature text-3xl text-blue-400 logo-3d"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">Lorem Ipsum Generator</h3>
+                        <p class="text-sm text-gray-300">Generate placeholder text for your designs and layouts.</p>
+                    </div>
+                </a>
+                <a href="percentage_calculator_description.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                    <i class="fas fa-percent text-3xl text-blue-400 logo-3d"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">Percentage Calculator</h3>
+                        <p class="text-sm text-gray-300">Calculate percentages, discounts, and tips with ease.</p>
+                    </div>
+                </a>
+                <a href="gst_calculator_description.html" class="tool-card">
+    <h3>GST Calculator</h3>
+    <p>Calculate Goods and Services Tax (GST) for various regions.</p>
+</a>
+                <a href="vat_calculator_description.html" class="tool-card">
+    <h3>VAT Calculator</h3>
+    <p>Calculate Value Added Tax (VAT) for different countries and rates.</p>
+</a>
+                <a href="sales_tax_calculator_description.html" class="tool-card">
+    <h3>Sales Tax Calculator</h3>
+    <p>Determine sales tax for purchases based on local rates.</p>
+</a>
+                <a href="invoice-generator.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                    <i class="fas fa-file-invoice text-3xl text-blue-400 logo-3d"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">Invoice Generator</h3>
+                        <p class="text-sm text-gray-300">Create professional invoices quickly and easily.</p>
+                    </div>
+                </a>
+                <a href="saas_pricing_calculator_description.html" class="tool-card">
+    <h3>SaaS Pricing Calculator</h3>
+    <p>Estimate pricing for SaaS products based on various metrics.</p>
+</a>
+                <a href="password_generator_description.html" class="tool-card">
+    <h3>Password Generator</h3>
+    <p>Generate strong, secure, and unique passwords.</p>
+</a>
+                <a href="md5_generator_description.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                    <i class="fas fa-hashtag text-3xl text-blue-400 logo-3d"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">MD5 Generator</h3>
+                        <p class="text-sm text-gray-300">Generate MD5 hashes for text or files.</p>
+                    </div>
+                </a>
+                <a href="font_generator_description.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                    <i class="fas fa-font text-3xl text-blue-400 logo-3d"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">Font Generator</h3>
+                        <p class="text-sm text-gray-300">Create stylish and unique fonts for social media and designs.</p>
+                    </div>
+                </a>
+                <a href="stopwatch_description.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                    <i class="fas fa-stopwatch text-3xl text-blue-400 logo-3d"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">Stopwatch</h3>
+                        <p class="text-sm text-gray-300">A simple and accurate online stopwatch for timing events.</p>
+                    </div>
+                </a>
+<a href="unit_converter_description.html" class="tool-card">
+    <h3>Unit Converter</h3>
+    <p>Convert between various units of measurement like length, weight, and temperature.</p>
+</a>
+                        <h3 class="font-bold text-lg">Percentage Calculator</h3>
+                        <p class="text-sm text-gray-300">Calculate percentages, discounts, and tips quickly.</p>
+                     </div>
+                 </a>
+<a href="word_to_pdf_description.html" class="tool-card">
+    <h3>Word to PDF</h3>
+    <p>Convert Word documents to PDF format.</p>
+</a>
+<a href="excel_to_pdf_description.html" class="tool-card">
+    <h3>Excel to PDF</h3>
+    <p>Convert Excel spreadsheets to PDF format.</p>
+</a>
+                 <a href="ppt_to_pdf_description.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                     <i class="fas fa-file-powerpoint text-3xl text-blue-400 logo-3d"></i>
+                     <div>
+                         <h3 class="font-bold text-lg">PPT to PDF</h3>
+                         <p class="text-sm text-gray-300">Convert PowerPoint presentations to PDF format.</p>
+                     </div>
+                 </a>
+<a href="jpg_to_pdf_description.html" class="tool-card">
+    <h3>JPG to PDF</h3>
+    <p>Convert JPG images to PDF format.</p>
+</a>
+<a href="png_to_pdf_description.html" class="tool-card">
+    <h3>PNG to PDF</h3>
+    <p>Convert PNG images to PDF format.</p>
+</a>
+                 <a href="tiff_to_pdf_description.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                      <i class="fas fa-file-image text-3xl text-blue-400 logo-3d"></i>
+                      <div>
+                          <h3 class="font-bold text-lg">TIFF to PDF</h3>
+                          <p class="text-sm text-gray-300">Convert TIFF images to PDF format.</p>
+                      </div>
+                  </a>
+<a href="pdf_to_jpg_description.html" class="tool-card">
+    <h3>PDF to JPG</h3>
+    <p>Convert PDF files to JPG images.</p>
+</a>
+<a href="pdf_to_png_description.html" class="tool-card">
+    <h3>PDF to PNG</h3>
+    <p>Convert PDF files to PNG images.</p>
+</a>
+<a href="pdf_to_word_description.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                      <i class="fas fa-file-word text-3xl text-blue-400 logo-3d"></i>
+                      <div>
+                          <h3 class="font-bold text-lg">PDF to Word</h3>
+                          <p class="text-sm text-gray-300">Convert PDF files to editable Word documents.</p>
+                      </div>
+                  </a>
+<a href="merge_pdf_description.html" class="tool-card">
+    <h3>Merge PDF</h3>
+    <p>Combine multiple PDF files into a single document.</p>
+</a>
+<a href="split_pdf_description.html" class="tool-card">
+    <h3>Split PDF</h3>
+    <p>Divide a large PDF file into smaller, separate documents.</p>
+</a>
+                 <a href="compress_pdf_description.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                      <i class="fas fa-file-archive text-3xl text-blue-400 logo-3d"></i>
+                      <div>
+                          <h3 class="font-bold text-lg">Compress PDF</h3>
+                          <p class="text-sm text-gray-300">Reduce the file size of your PDF documents.</p>
+                      </div>
+                  </a>
+<a href="rotate_pdf_description.html" class="tool-card">
+    <h3>Rotate PDF</h3>
+    <p>Rotate pages in your PDF document to the correct orientation.</p>
+</a>
+<a href="edit_pdf_description.html" class="tool-card">
+    <h3>Edit PDF</h3>
+    <p>Make changes to text, images, and pages in your PDF files.</p>
+</a>
+<a href="sign_pdf_description.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                      <i class="fas fa-signature text-3xl text-blue-400 logo-3d"></i>
+                      <div>
+                          <h3 class="font-bold text-lg">Sign PDF</h3>
+                          <p class="text-sm text-gray-300">Add digital signatures to your PDF documents securely.</p>
+                      </div>
+                  </a>
+<a href="watermark_pdf_description.html" class="tool-card">
+    <h3>Watermark PDF</h3>
+    <p>Add text or image watermarks to your PDF files.</p>
+</a>
+                </a>
+                <a href="unit-converter.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                    <i class="fas fa-ruler-combined text-3xl text-blue-400 logo-3d"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">Unit Converter</h3>
+                        <p class="text-sm text-gray-300">Convert various units.</p>
+                    </div>
+                </a>
+                <a href="stopwatch.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                    <i class="fas fa-stopwatch text-3xl text-blue-400 logo-3d"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">Stopwatch</h3>
+                        <p class="text-sm text-gray-300">Measure time with laps.</p>
+                    </div>
+                </a>
+                <a href="md5-generator.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                    <i class="fas fa-fingerprint text-3xl text-blue-400 logo-3d"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">MD5 Generator</h3>
+                        <p class="text-sm text-gray-300">Generate MD5 hash of text.</p>
+                    </div>
+                </a>
+                <a href="font-generator.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                    <i class="fas fa-font text-3xl text-blue-400 logo-3d"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">Font Generator</h3>
+                        <p class="text-sm text-gray-300">Create stylish text fonts.</p>
+                    </div>
+                </a>
+                <a href="password-generator.html" class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all">
+                    <i class="fas fa-key text-3xl text-blue-400 logo-3d"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">Password Generator</h3>
+                        <p class="text-sm text-gray-300">Generate secure passwords.</p>
+                    </div>
+                </a>
+                 
+                <a href="pdf-tools.html" class="relative group bg-white/5 p-8 rounded-2xl hover:bg-white/10 transition-all border border-white/10 hover:border-white/20">
+    <div class="absolute top-4 right-4 bg-green-500/20 text-green-400 text-sm px-3 py-1 rounded-full">New</div>
+                    <i class="fas fa-file-invoice-dollar text-3xl text-blue-400 logo-3d"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">Invoice Generator</h3>
+                        <p class="text-sm text-gray-300">Create and download professional invoices.</p>
+                    </div>
+                </a>
+                 <div class="tool-card bg-white/10 p-6 rounded-xl flex items-center gap-4">
+                    <i class="fas fa-id-card text-3xl text-gray-500"></i>
+                    <div>
+                        <h3 class="font-bold text-lg text-gray-500">Fake ID Generator</h3>
+                        <p class="text-sm text-gray-400">Coming Soon</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ad Placeholder -->
+        <div class="container mx-auto px-4 py-8">
+            <div class="bg-white/10 rounded-lg h-40 flex items-center justify-center text-gray-400">
+                Adsense / Addsterra Ad Unit
+            </div>
+        </div>
+
+    </main>
+
+    <div id="main-footer"></div>
+
+
+    <!-- Back to Top -->
+    <button id="backToTopBtn" class="fixed bottom-8 right-8 bg-blue-500 w-12 h-12 rounded-full shadow-lg hover:bg-blue-600 transition-colors">
+        <i class="fas fa-arrow-up text-white"></i>
+    </button>
+
+    <!-- AdSense Script -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXX" crossorigin="anonymous"></script>
+
+<!-- Social Media Meta Tags -->
+<meta property="og:title" content="Trae Tools - Free Online Utilities">
+<meta property="og:description" content="Free tools for developers, students & professionals">
+<meta property="og:image" content="https://example.com/og-image.jpg">
+
+<!-- Scripts -->
+    <script src="https://kit.fontawesome.com/your-kit-code.js"></script>
+    <script src="components.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

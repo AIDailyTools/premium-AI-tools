@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Converter - Trae Tools</title>
+    <meta name="description" content="A versatile online unit converter for length, weight, temperature, and more. Quickly and accurately convert between different units of measurement.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- AdSense Placeholder -->
+    <div class="adsense-placeholder-top">
+        <!-- Google AdSense code goes here -->
+    </div>
+    <div id="main-nav"></div>
+
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-2 logo-3d">Unit Converter</h1>
+        <p class="text-lg mb-8 text-gray-400">A versatile and comprehensive unit converter. Easily convert between different units of measurement for length, temperature, and data. Simply select a category, enter a value, and choose your units to get an instant conversion.</p>
+        
+        <div class="flex justify-end mb-4">
+            <button id="show-help-btn" class="button-3d">Show Help</button>
+        </div>
+        
+        <div class="flex gap-8">
+            <aside class="w-1/4">
+                <div id="converter-menu" class="bg-white/10 rounded-xl p-4">
+                    <!-- Accordion menu will be generated here -->
+                </div>
+            </aside>
+            
+            <div class="w-3/4 bg-white/10 p-8 rounded-xl shadow-lg">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                    <div>
+                        <label for="inputValue" class="block mb-2">Value</label>
+                        <input type="number" id="inputValue" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white" placeholder="Enter value">
+                    </div>
+                    <div>
+                        <label for="fromUnit" class="block mb-2">From</label>
+                        <select id="fromUnit" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white"></select>
+                    </div>
+                    <div>
+                        <label for="toUnit" class="block mb-2">To</label>
+                        <select id="toUnit" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none focus:ring-0 text-white"></select>
+                    </div>
+                </div>
+                <button id="convertBtn" class="w-full button-3d p-3 rounded mt-6">Convert</button>
+                <div id="result" class="mt-6 text-2xl font-bold text-accent"></div>
+                
+                <!-- AdSense Placeholder -->
+                <div class="adsense-placeholder-card mt-8">
+                    <!-- Google AdSense code goes here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-lg max-w-2xl w-full">
+            <h2 class="text-3xl font-bold mb-4">How to Use the Unit Converter</h2>
+            <div class="space-y-4">
+                <p>This tool allows you to convert between different units of measurement.</p>
+                <ul class="list-disc list-inside ml-4">
+                    <li><strong>Select a Category:</strong> Choose from Length, Temperature, Weight, etc.</li>
+                    <li><strong>Enter a Value:</strong> Input the number you want to convert.</li>
+                    <li><strong>Choose Units:</strong> Select the 'From' and 'To' units for your conversion.</li>
+                    <li><strong>Convert:</strong> Click the 'Convert' button to see the result.</li>
+                </ul>
+            </div>
+            <button id="close-help-btn" class="mt-6 button-3d">Close</button>
+        </div>
+    </div>
+
+    <div id="main-footer"></div>
+    <script src="components.js"></script>
+    <script>
+        const converters = {
+            "Common Converters": {
+                "Length": {
+                    base: "Meter",
+                    units: {
+                        "Meter": 1,
+                        "Kilometer": 1000,
+                        "Centimeter": 0.01,
+                        "Millimeter": 0.001,
+                        "Micrometer": 1e-6,
+                        "Nanometer": 1e-9,
+                        "Mile": 1609.34,
+                        "Yard": 0.9144,
+                        "Foot": 0.3048,
+                        "Inch": 0.0254
+                    }
+                },
+                "Temperature": {
+                    units: ["Celsius", "Fahrenheit", "Kelvin"],
+                    convert: function(value, from, to) {
+                        let tempInCelsius;
+                        if (from === 'Celsius') tempInCelsius = value;
+                        if (from === 'Fahrenheit') tempInCelsius = (value - 32) * 5/9;
+                        if (from === 'Kelvin') tempInCelsius = value - 273.15;
+
+                        if (to === 'Celsius') return tempInCelsius;
+                        if (to === 'Fahrenheit') return (tempInCelsius * 9/5) + 32;
+                        if (to === 'Kelvin') return tempInCelsius + 273.15;
+                    }
+                },
+                "Weight": {
+                    base: "Kilogram",
+                    units: {
+                        "Kilogram": 1,
+                        "Gram": 0.001,
+                        "Milligram": 1e-6,
+                        "Metric Ton": 1000,
+                        "Pound": 0.453592,
+                        "Ounce": 0.0283495
+                    }
+                },
+                "Volume": {
+                    base: "Liter",
+                    units: {
+                        "Liter": 1,
+                        "Cubic Meter": 1000,
+                        "Cubic Centimeter": 0.001,
+                        "Milliliter": 0.001,
+                        "Gallon (US)": 3.78541,
+                        "Quart (US)": 0.946353,
+                        "Pint (US)": 0.473176,
+                        "Cup (US)": 0.24,
+                        "Fluid Ounce (US)": 0.0295735
+                    }
+                },
+                "Area": {
+                    base: "Square Meter",
+                    units: {
+                        "Square Meter": 1,
+                        "Square Kilometer": 1e6,
+                        "Square Centimeter": 1e-4,
+                        "Square Millimeter": 1e-6,
+                        "Square Mile": 2.59e6,
+                        "Square Yard": 0.836127,
+                        "Square Foot": 0.092903,
+                        "Square Inch": 0.00064516,
+                        "Hectare": 10000,
+                        "Acre": 4046.86
+                    }
+                }
+            },
+            "Engineering Converters": {
+                "Velocity": {
+                    base: "Meter/Second",
+                    units: {
+                        "Meter/Second": 1,
+                        "Kilometer/Hour": 0.277778,
+                        "Mile/Hour": 0.44704,
+                        "Foot/Second": 0.3048,
+                        "Knot": 0.514444
+                    }
+                },
+                "Pressure": {
+                    base: "Pascal",
+                    units: {
+                        "Pascal": 1,
+                        "Kilopascal": 1000,
+                        "Bar": 100000,
+                        "PSI": 6894.76,
+                        "Atmosphere": 101325
+                    }
+                },
+                "Energy": {
+                    base: "Joule",
+                    units: {
+                        "Joule": 1,
+                        "Kilojoule": 1000,
+                        "Calorie": 4.184,
+                        "Kilocalorie": 4184,
+                        "Watt Hour": 3600,
+                        "Kilowatt Hour": 3.6e6,
+                        "BTU": 1055.06
+                    }
+                },
+                "Power": {
+                    base: "Watt",
+                    units: {
+                        "Watt": 1,
+                        "Kilowatt": 1000,
+                        "Megawatt": 1e6,
+                        "Horsepower": 745.7
+                    }
+                }
+            }
+        };
+
+        const fromUnitSelect = document.getElementById('fromUnit');
+        const toUnitSelect = document.getElementById('toUnit');
+        const menuContainer = document.getElementById('converter-menu');
+        let currentConverter;
+
+        function createAccordionMenu() {
+            let html = '';
+            for (const category in converters) {
+                html += `<div>`;
+                html += `<button class="w-full text-left p-3 bg-white/20 rounded-t-lg mt-2 font-bold accordion-btn" data-category="${category}">${category}</button>`;
+                html += `<div class="pl-4 pb-2 bg-white/10 rounded-b-lg accordion-content hidden">`;
+                for (const subCategory in converters[category]) {
+                    html += `<a href="#" class="block p-2 hover:bg-white/20 rounded converter-link" data-category="${category}" data-subcategory="${subCategory}">${subCategory}</a>`;
+                }
+                html += `</div></div>`;
+            }
+            menuContainer.innerHTML = html;
+        }
+
+        function populateUnits() {
+            if (!currentConverter) return;
+
+            const units = currentConverter.units;
+            fromUnitSelect.innerHTML = '';
+            toUnitSelect.innerHTML = '';
+            const unitNames = Array.isArray(units) ? units : Object.keys(units);
+
+            unitNames.forEach(unit => {
+                fromUnitSelect.innerHTML += `<option value="${unit}">${unit}</option>`;
+                toUnitSelect.innerHTML += `<option value="${unit}">${unit}</option>`;
+            });
+        }
+
+        // Event listeners
+        menuContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('accordion-btn')) {
+                e.preventDefault();
+                const content = e.target.nextElementSibling;
+                content.classList.toggle('hidden');
+            }
+            
+            if (e.target.classList.contains('converter-link')) {
+                e.preventDefault();
+                const category = e.target.dataset.category;
+                const subCategory = e.target.dataset.subcategory;
+                currentConverter = converters[category][subCategory];
+                document.querySelector('h1.logo-3d').innerText = `${subCategory} Converter`;
+                populateUnits();
+                document.getElementById('result').innerText = '';
+                document.getElementById('inputValue').value = '';
+            }
+        });
+
+        document.getElementById('convertBtn').addEventListener('click', () => {
+            const inputValue = parseFloat(document.getElementById('inputValue').value);
+            const fromUnit = fromUnitSelect.value;
+            const toUnit = toUnitSelect.value;
+            const resultDiv = document.getElementById('result');
+
+            if (isNaN(inputValue)) {
+                resultDiv.innerText = 'Please enter a valid number.';
+                return;
+            }
+
+            if (!currentConverter) {
+                resultDiv.innerText = 'Please select a converter type from the menu.';
+                return;
+            }
+
+            let result;
+            if (currentConverter.convert) {
+                result = currentConverter.convert(inputValue, fromUnit, toUnit);
+            } else {
+                const baseValue = inputValue * currentConverter.units[fromUnit];
+                result = baseValue / currentConverter.units[toUnit];
+            }
+
+            resultDiv.innerText = `${inputValue} ${fromUnit} = ${result.toFixed(6)} ${toUnit}`;
+        });
+
+        // Auto-convert on input change
+        document.getElementById('inputValue').addEventListener('input', () => {
+            if (document.getElementById('inputValue').value) {
+                document.getElementById('convertBtn').click();
+            }
+        });
+
+        fromUnitSelect.addEventListener('change', () => {
+            if (document.getElementById('inputValue').value) {
+                document.getElementById('convertBtn').click();
+            }
+        });
+
+        toUnitSelect.addEventListener('change', () => {
+            if (document.getElementById('inputValue').value) {
+                document.getElementById('convertBtn').click();
+            }
+        });
+
+        // Initialize
+        createAccordionMenu();
+        // Set a default converter
+        currentConverter = converters["Common Converters"]["Length"];
+        populateUnits();
+
+        // Modal Logic
+        const helpModal = document.getElementById('help-modal');
+        const showHelpBtn = document.getElementById('show-help-btn');
+        const closeHelpBtn = document.getElementById('close-help-btn');
+
+        showHelpBtn.addEventListener('click', () => {
+            helpModal.classList.remove('hidden');
+        });
+
+        closeHelpBtn.addEventListener('click', () => {
+            helpModal.classList.add('hidden');
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === helpModal) {
+                helpModal.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

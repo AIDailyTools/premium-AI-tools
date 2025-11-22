@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GST Calculator - Trae Tools</title>
+    <meta name="description" content="Calculate GST (Goods and Services Tax) for India. Easy-to-use GST calculator with different tax rates.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-4 logo-3d">GST Calculator</h1>
+        <p class="text-gray-400 mb-8">Calculate GST (Goods and Services Tax) for India with different tax rates.</p>
+        
+        <div class="bg-white/10 p-8 rounded-xl shadow-lg max-w-2xl mx-auto">
+            <div class="space-y-6">
+                <!-- GST Rate Selection -->
+                <div>
+                    <label class="block mb-2 font-bold">GST Rate (%)</label>
+                    <select id="gst-rate" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none text-white">
+                        <option value="0">0% - Exempt</option>
+                        <option value="5">5% - Essential goods</option>
+                        <option value="12">12% - Standard goods</option>
+                        <option value="18" selected>18% - Most goods & services</option>
+                        <option value="28">28% - Luxury goods</option>
+                    </select>
+                </div>
+
+                <!-- Amount Input -->
+                <div>
+                    <label class="block mb-2 font-bold">Amount (₹)</label>
+                    <input type="number" id="amount" class="w-full p-3 rounded bg-white/20 border-2 border-transparent focus:border-accent focus:outline-none text-white" placeholder="Enter amount" value="1000">
+                </div>
+
+                <!-- Calculation Type -->
+                <div>
+                    <label class="block mb-2 font-bold">Calculation Type</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center">
+                            <input type="radio" name="calc-type" value="exclusive" checked class="mr-2">
+                            <span>Add GST (Exclusive)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="calc-type" value="inclusive" class="mr-2">
+                            <span>Remove GST (Inclusive)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Calculate Button -->
+                <button id="calculate-btn" class="w-full button-3d">Calculate GST</button>
+
+                <!-- Results -->
+                <div id="results" class="bg-black/30 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">Results</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span>Original Amount:</span>
+                            <span id="original-amount" class="font-bold">₹1,000.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>GST Amount:</span>
+                            <span id="gst-amount" class="font-bold text-accent">₹180.00</span>
+                        </div>
+                        <div class="flex justify-between border-t border-gray-600 pt-2">
+                            <span class="font-bold">Total Amount:</span>
+                            <span id="total-amount" class="font-bold text-lg">₹1,180.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script>
+        function calculateGST() {
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            const gstRate = parseFloat(document.getElementById('gst-rate').value);
+            const calcType = document.querySelector('input[name="calc-type"]:checked').value;
+            
+            let originalAmount, gstAmount, totalAmount;
+            
+            if (calcType === 'exclusive') {
+                // Add GST to amount
+                originalAmount = amount;
+                gstAmount = (amount * gstRate) / 100;
+                totalAmount = amount + gstAmount;
+            } else {
+                // Remove GST from amount
+                totalAmount = amount;
+                originalAmount = amount / (1 + gstRate / 100);
+                gstAmount = amount - originalAmount;
+            }
+            
+            // Update results
+            document.getElementById('original-amount').textContent = `₹${originalAmount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('gst-amount').textContent = `₹${gstAmount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('total-amount').textContent = `₹${totalAmount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+        
+        // Event listeners
+        document.getElementById('calculate-btn').addEventListener('click', calculateGST);
+        document.getElementById('amount').addEventListener('input', calculateGST);
+        document.getElementById('gst-rate').addEventListener('change', calculateGST);
+        document.querySelectorAll('input[name="calc-type"]').forEach(radio => {
+            radio.addEventListener('change', calculateGST);
+        });
+        
+        // Initial calculation
+        calculateGST();
+    </script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Downloader - Trae Tools</title>
+    <meta name="description" content="Download videos from various platforms like YouTube, Instagram, Facebook, and more. Fast, free, and easy to use.">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- AdSense Placeholder -->
+    <div class="adsense-placeholder-top">
+        <!-- Google AdSense code goes here -->
+    </div>
+
+    <!-- Navigation -->
+    <div id="main-nav"></div>
+
+    <!-- Tool Content -->
+    <main class="container mx-auto px-4 py-16">
+        <div class="text-center">
+            <h1 class="text-5xl font-bold logo-3d mb-4">Online Video Downloader</h1>
+            <p class="text-xl text-gray-300 mb-8">Download videos from YouTube, Facebook, Instagram, TikTok, and many other platforms.</p>
+        </div>
+
+        <div id="downloader-card" class="bg-white/10 p-8 rounded-2xl shadow-lg w-full max-w-3xl mx-auto text-center">
+            <div class="flex flex-col gap-4">
+                <input type="text" id="video-url" placeholder="Paste video URL here (YouTube, Facebook, Instagram, TikTok, etc.)" class="w-full p-4 rounded-lg bg-gray-800/50 text-white border-2 border-gray-600 focus:border-accent focus:outline-none transition-colors">
+                
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <select id="quality-select" class="flex-grow p-4 rounded-lg bg-gray-800/50 text-white border-2 border-gray-600 focus:border-accent focus:outline-none transition-colors">
+                        <option value="720p">720p HD</option>
+                        <option value="480p">480p</option>
+                        <option value="360p">360p</option>
+                        <option value="240p">240p</option>
+                        <option value="1080p">1080p Full HD</option>
+                        <option value="audio">Audio Only (MP3)</option>
+                    </select>
+                    <button id="download-btn" class="bg-accent hover:bg-accent-dark text-white font-bold py-4 px-8 rounded-lg transition-colors">Download Video</button>
+                </div>
+            </div>
+            
+            <div id="loader" class="hidden mt-4">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
+                <p class="mt-2 text-gray-300">Processing video...</p>
+            </div>
+            
+            <div id="error-message" class="text-red-500 mt-4"></div>
+            <div id="success-message" class="text-green-500 mt-4"></div>
+            <div id="download-links" class="mt-6"></div>
+        </div>
+
+        <!-- AdSense Placeholder -->
+        <div class="adsense-placeholder-card mt-8">
+            <!-- Google AdSense code goes here -->
+        </div>
+
+        <div class="text-gray-300 mt-16 text-lg">
+            <h2 class="text-3xl font-bold text-white mb-6 text-center">How to Download Videos Online?</h2>
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <div class="bg-white/10 p-6 rounded-lg">
+                    <h3 class="text-2xl font-bold text-accent mb-3">1. Copy Video URL</h3>
+                    <p>Find the video you want to download and copy its URL from the browser's address bar.</p>
+                </div>
+                <div class="bg-white/10 p-6 rounded-lg">
+                    <h3 class="text-2xl font-bold text-accent mb-3">2. Paste URL</h3>
+                    <p>Paste the video URL into the input box at the top of this page.</p>
+                </div>
+                <div class="bg-white/10 p-6 rounded-lg">
+                    <h3 class="text-2xl font-bold text-accent mb-3">3. Download</h3>
+                    <p>Click the "Download" button and choose your desired format and quality from the available options.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-gray-300 mt-16">
+            <h2 class="text-3xl font-bold text-white mb-6 text-center">Supported Platforms</h2>
+            <div class="flex flex-wrap justify-center items-center gap-8">
+                <span class="text-2xl font-semibold">YouTube</span>
+                <span class="text-2xl font-semibold">Facebook</span>
+                <span class="text-2xl font-semibold">Instagram</span>
+                <span class="text-2xl font-semibold">TikTok</span>
+                <span class="text-2xl font-semibold">Vimeo</span>
+                <span class="text-2xl font-semibold">Dailymotion</span>
+                <span class="text-2xl font-semibold">Twitter</span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+
+    <script src="components.js"></script>
+    <script>
+        const downloadBtn = document.getElementById('download-btn');
+        const videoUrlInput = document.getElementById('video-url');
+        const qualitySelect = document.getElementById('quality-select');
+        const loader = document.getElementById('loader');
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+        const downloadLinksContainer = document.getElementById('download-links');
+
+        // Supported platforms regex patterns
+        const supportedPlatforms = {
+            youtube: /(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/,
+            facebook: /facebook\.com.*\/videos?\//,
+            instagram: /instagram\.com\/(p|reel|tv)\//,
+            tiktok: /tiktok\.com.*\/video\//,
+            vimeo: /vimeo\.com\/\d+/,
+            dailymotion: /dailymotion\.com\/video\//,
+            twitter: /twitter\.com.*\/status\//
+        };
+
+        function validateUrl(url) {
+            try {
+                new URL(url);
+                return Object.values(supportedPlatforms).some(pattern => pattern.test(url));
+            } catch {
+                return false;
+            }
+        }
+
+        function getVideoTitle(url) {
+            if (supportedPlatforms.youtube.test(url)) {
+                return 'YouTube Video';
+            } else if (supportedPlatforms.facebook.test(url)) {
+                return 'Facebook Video';
+            } else if (supportedPlatforms.instagram.test(url)) {
+                return 'Instagram Video';
+            } else if (supportedPlatforms.tiktok.test(url)) {
+                return 'TikTok Video';
+            } else if (supportedPlatforms.vimeo.test(url)) {
+                return 'Vimeo Video';
+            } else if (supportedPlatforms.dailymotion.test(url)) {
+                return 'Dailymotion Video';
+            } else if (supportedPlatforms.twitter.test(url)) {
+                return 'Twitter Video';
+            }
+            return 'Video';
+        }
+
+        downloadBtn.addEventListener('click', async () => {
+            const videoUrl = videoUrlInput.value.trim();
+            const selectedQuality = qualitySelect.value;
+
+            // Clear previous messages
+            errorMessage.textContent = '';
+            successMessage.textContent = '';
+            downloadLinksContainer.innerHTML = '';
+
+            if (!videoUrl) {
+                errorMessage.textContent = 'Please paste a video URL.';
+                return;
+            }
+
+            if (!validateUrl(videoUrl)) {
+                errorMessage.textContent = 'Please enter a valid URL from supported platforms (YouTube, Facebook, Instagram, TikTok, Vimeo, Dailymotion, Twitter).';
+                return;
+            }
+
+            loader.classList.remove('hidden');
+
+            // Simulate processing time
+            setTimeout(() => {
+                loader.classList.add('hidden');
+                
+                const videoTitle = getVideoTitle(videoUrl);
+                const fileExtension = selectedQuality === 'audio' ? 'mp3' : 'mp4';
+                const fileName = `${videoTitle}_${selectedQuality}.${fileExtension}`;
+
+                // Create download link
+                const downloadLink = document.createElement('div');
+                downloadLink.className = 'bg-gray-700 hover:bg-gray-600 p-4 rounded-lg transition-all cursor-pointer';
+                downloadLink.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-accent rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-semibold text-white">${fileName}</p>
+                                <p class="text-sm text-gray-300">${selectedQuality === 'audio' ? 'Audio Only' : selectedQuality + ' Video'}</p>
+                            </div>
+                        </div>
+                        <button class="bg-accent hover:bg-accent-dark px-4 py-2 rounded-lg text-white font-medium transition-colors" onclick="simulateDownload('${fileName}')">
+                            Download
+                        </button>
+                    </div>
+                `;
+
+                downloadLinksContainer.appendChild(downloadLink);
+                successMessage.textContent = 'Video processed successfully! Click the download button to save the file.';
+            }, 2000);
+        });
+
+        function simulateDownload(fileName) {
+            // Create a temporary download link
+            const link = document.createElement('a');
+            link.href = '#';
+            link.download = fileName;
+            
+            // Show download started message
+            successMessage.textContent = `Download started: ${fileName}`;
+            
+            // In a real implementation, this would trigger the actual download
+            // For demo purposes, we'll just show a message
+            setTimeout(() => {
+                successMessage.textContent = `Note: This is a demo. In a real implementation, ${fileName} would be downloaded to your device.`;
+            }, 1000);
+        }
+
+        // Enter key support
+        videoUrlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                downloadBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
